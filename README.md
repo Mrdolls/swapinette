@@ -1,45 +1,47 @@
-# push_swap Tester
+# push_swap Performance Tester
 
-Petit script bash pour tester automatiquement le projet [`push_swap`](https://github.com/) (projet de tri par instructions, école 42).
-
-Il permet de :
-- Générer des listes de nombres aléatoires uniques.
-- Exécuter `push_swap` sur ces listes.
-- Vérifier que le nombre d'instructions ne dépasse pas une limite donnée.
-- Afficher une barre de progression claire.
-- Arrêter immédiatement en cas d'erreur (limite dépassée).
+Ce script Bash permet de **tester automatiquement** les performances d'un exécutable `push_swap` avec une barre de progression.
 
 ---
 
-## ✅ Utilisation
+## 🛠️ Utilisation
 
-### 1. Rendre le script exécutable :
 ``bash
-chmod +x test_push_swap.sh
+./test_push_swap.sh <executable> <nb_tests> <taille_liste> <max_operations>
 ``
 
-2. Lancer le test :
-```bash
-test_push_swap.sh <nb_tests> <size_of_list> <max_instructions>
 Exemple :
+``bash
+./test_push_swap.sh push_swap 100 100 700
+``
 
-./test_push_swap.sh 100 100 700
+Effectue 100 tests avec des listes de 100 entiers aléatoires uniques (entre 0 et 99).
 
-    Teste 100 listes aléatoires de 100 entiers.
+Vérifie que push_swap ne dépasse jamais 700 instructions.
 
-    Vérifie que push_swap utilise ≤ 700 instructions à chaque fois.
+Affiche une barre de progression en temps réel.
 
-🧪 Fonctionnement
+S’arrête immédiatement en cas d’échec.
 
-Le script fait ceci :
+| Argument           | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `<executable>`     | Nom de votre exécutable `push_swap`           |
+| `<nb_tests>`       | Nombre de tests à exécuter                    |
+| `<taille_liste>`   | Taille de la liste aléatoire pour chaque test |
+| `<max_operations>` | Nombre maximum d'instructions autorisées      |
 
-1. Génère une liste aléatoire avec shuf.
-2. Lance ./push_swap sur cette liste.
-3. Compte le nombre de lignes (instructions) générées.
-4. Compare avec la limite autorisée.
-5. Affiche une barre de progression.
+✅ Exemple de sortie
 
-En cas de dépassement de la limite :
+Progression : [##########################################......................] 50%
+...
+
+OK - Toutes les operations respectent la limite (700)
+
+🔴 En cas d’erreur :
+
+KO ➜ 752 operations (limite 700)
+
+Le script s'arrête dès qu'une opération dépasse la limite fixée.
 
 KO ➜ 722 instructions (limite 700)
 

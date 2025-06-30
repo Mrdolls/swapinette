@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <push_swap_exec> <nb_tests> <size_of_list> <max_moves>"
+    echo "Usage: $0 <executable> <nb_tests> <size_of_list> <max_operations>"
     exit 1
 fi
 

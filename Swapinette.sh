@@ -1,13 +1,13 @@
 #!/bin/bash
 # bash Swapinette [repetitions] [nombres de nombres generes aleatoirement pour push_swap] [limit a ne pas depasser]
 i=1
-total=$1
-size=$2
-max_moves=$3
+total=$2
+size=$3
+max_moves=$4
 
 while [ $i -le $total ]; do
-    ARG="$(shuf -i 0-99 -n $size | tr '\n' ' ')"
-    INDEX="$(./"./push_swap" $ARG | wc -l)"
+    ARG="$(shuf -i 0-$size -n $size | tr '\n' ' ')"
+    INDEX="$(./"$1" $ARG | wc -l)"
     if [ $INDEX -gt $max_moves ]; then
         echo -e "\n\e[31mKO ➜ $INDEX operations (limite $max_moves)\e[0m"
         exit 1

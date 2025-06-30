@@ -7,7 +7,7 @@ max_moves=$3
 
 while [ $i -le $total ]; do
     ARG="$(shuf -i 0-99 -n $size | tr '\n' ' ')"
-    INDEX="$(./push_swap $ARG | wc -l)"
+    INDEX="$(../push_swap $ARG | wc -l)"
     if [ $INDEX -gt $max_moves ]; then
         echo -e "\n\e[31mKO ➜ $INDEX operations (limite $max_moves)\e[0m"
         exit 1

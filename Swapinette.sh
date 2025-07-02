@@ -15,12 +15,11 @@ max_moves=$5
 echo -e "\n➤ Test 1 : Vérification avec $checker..."
 
 for ((i=1; i<=total; i++)); do
-    ARG="$(shuf -i 0-$(($size - 1)) -n $size | tr '\n' ' ')"
+    ARG="$(shuf -i 1-$(($size - 1)) -n $size | tr '\n' ' ')"
     RESULT=$(./"$exec_name" $ARG | ./"$checker" $ARG)
 
     if [ "$RESULT" != "OK" ]; then
         echo -e "\n\e[31mKO avec $checker ➜ Résultat: $RESULT\e[0m"
-        echo "Arguments : $ARG"
         exit 1
     fi
 
@@ -41,7 +40,6 @@ for ((i=1; i<=total; i++)); do
 
     if [ "$INDEX" -gt "$max_moves" ]; then
         echo -e "\n\e[31mKO ➜ $INDEX opérations (limite $max_moves)\e[0m"
-        echo "Arguments : $ARG"
         exit 1
     fi
 

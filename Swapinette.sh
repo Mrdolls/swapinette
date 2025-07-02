@@ -49,4 +49,4 @@ for ((i=1; i<=total; i++)); do
     printf "\rProgression : [%-100s] %d%%" "$bar" "$percent"
 done
 
-echo -e "\n\e[92m✔ Toutes les opérations sont sous la limite ($max_moves)\e[0m"
+echo -e "\n\e[92m✔ Toutes les opérations sont sous la limite ($max_moves operations)\e[0m"

@@ -10,6 +10,8 @@ C_GREEN='\033[0;32m'
 C_RED='\033[0;31m'
 C_YELLOW='\033[0;33m'
 
+ORIGINAL_DIR="$(pwd)"
+
 main() {
     echo -e "${C_BLUE}Bienvenue dans l'installateur de Swapinette !${C_RESET}"
 
@@ -49,6 +51,7 @@ main() {
     chmod +x "$INSTALL_DIR/swapinette.sh"
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' configuré.${C_RESET}"
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
+    cd "$ORIGINAL_DIR"
     exec "$SHELL"
 }
 

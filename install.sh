@@ -52,7 +52,13 @@ main() {
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' configuré.${C_RESET}"
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
     cd "$ORIGINAL_DIR"
-    exec "$SHELL"
+    if [ -n "$ZSH_VERSION" ]; then
+        exec zsh
+    elif [ -n "$BASH_VERSION" ]; then
+        exec bash --rcfile "$SHELL_CONFIG"
+    else
+        exec "$SHELL"
+    fi
 }
 
 main

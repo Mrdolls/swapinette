@@ -32,7 +32,7 @@ if [ "$show_help" = true ]; then
 fi
 
 if [ "$#" -ne 5 ]; then
-    printf "\e[31mError:\e[0m Invalid arguments.\nFor more info ➤ use \e[34m-help\e[0m\n"
+    printf "\e[31m✘ Error:\e[0m Invalid arguments.\nFor more info ➤ use \e[34m-help\e[0m\n"
     exit 1
 fi
 

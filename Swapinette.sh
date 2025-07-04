@@ -1,7 +1,38 @@
 #!/bin/bash
 
+show_args=false
+
+show_help=false
+
+if [[ "$1" == "-a" ]]; then
+    show_args=true
+    shift
+fi
+
+if [[ "$1" == "-help" ]]; then
+    show_help=true
+    shift
+fi
+
+if [ "$show_help" = true ]; then
+    printf "\
+    Usage: %s [-a] <executable> <checker> <nb_tests> <list_size> <max_operations>\n\
+    \n\
+    Options:\n\
+    -a                  Show arguments if a test fails\n\
+    \n\
+    Arguments:\n\
+    <executable>        Your push_swap executable\n\
+    <checker>           The checker program to validate output (e.g., checker_linux or checker_Mac)\n\
+    <nb_tests>          Number of random tests to run\n\
+    <list_size>         Size of the list to sort\n\
+    <max_operations>    Maximum allowed operations per test\n\
+    " "$0"
+    exit 1
+fi
+
 if [ "$#" -ne 5 ]; then
-    echo "Usage: $0 <executable> <checker> <nb_tests> <size_of_list> <max_operations>"
+    printf "\e[31mError:\e[0m Invalid arguments.\nFor more info ➤ use \e[34m-help\e[0m\n"
     exit 1
 fi
 
@@ -11,8 +42,10 @@ total=$3
 size=$4
 max_moves=$5
 
+
+
 ### Test 1
-echo -e "\n➤ Test 1 : Vérification avec $checker..."
+echo -e "\n➤ Test 1: Verifying with $checker..."
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 1-$(($size - 1)) -n $size | tr '\n' ' ')"
@@ -21,22 +54,25 @@ for ((i=1; i<=total; i++)); do
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\n\e[31mKO avec $checker ➜ Résultat: $RESULT\e[0m"
+        echo -e "\n\e[31mKO with $checker ➜ Result: $RESULT\e[0m"
+        if [ "$show_args" = true ]; then
+            echo -e "\e[33mArguments: $ARG\e[0m"
+        fi
         exit 1
     fi
 
     percent=$(( i * 100 / total ))
     filled=$(( percent ))
     bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
-    printf "\rProgression : [%-100s] %d%%" "$bar" "$percent"
+    printf "\rProgress: [%-100s] %d%%" "$bar" "$percent"
 done
 sleep 0.5
 printf "\r\033[K"
-echo -e "\e[92m✔ Toutes les vérifications $checker sont OK\e[0m"
+echo -e "\e[92m✔ All verifications with $checker passed\e[0m"
 
 ### Test 2
 sleep 0.5
-echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
+echo -e "\n➤ Test 2: Verifying number of operations..."
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 0-$(($size - 1)) -n $size | tr '\n' ' ')"
@@ -45,15 +81,18 @@ for ((i=1; i<=total; i++)); do
     if [ "$INDEX" -gt "$max_moves" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\e[31mKO ➜ $INDEX opérations (limite $max_moves)\e[0m"
+        echo -e "\e[31mKO ➜ $INDEX operations (limit $max_moves)\e[0m"
+        if [ "$show_args" = true ]; then
+            echo -e "\e[33mArguments: $ARG\e[0m"
+        fi
         exit 1
     fi
 
     percent=$(( i * 100 / total ))
     filled=$(( percent ))
     bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
-    printf "\rProgression : [%-100s] %d%%" "$bar" "$percent"
+    printf "\rProgress: [%-100s] %d%%" "$bar" "$percent"
 done
 sleep 0.5
 printf "\r\033[K"
-echo -e "\e[92m✔ Toutes les opérations sont sous la limite ($max_moves operations)\e[0m"
+echo -e "\e[92m✔ All operations are within the limit ($max_moves operations)\e[0m"

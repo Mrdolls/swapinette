@@ -1,50 +1,40 @@
-# push_swap Performance Tester
+# Push_Swap Tester 🧪
 
-Ce script Bash permet de **tester automatiquement** les performances d'un exécutable `push_swap` avec une barre de progression.
+A Bash script to automatically test your `push_swap` project with a checker and validate performance constraints.
 
----
+## 🔧 Features
 
-## 🛠️ Utilisation
+- Verifies the correctness of your `push_swap` output using a checker.
+- Ensures the number of operations stays within a specified limit.
+- Shows a progress bar for both verification and performance tests.
+- Optional flag to display arguments when a test fails.
 
-``bash
-./test_push_swap.sh <executable> <nb_tests> <taille_liste> <max_operations>
-``
+## 📝 Usage
 
-Exemple :
-``bash
-./test_push_swap.sh push_swap 100 100 700
-``
+```bash
+./test.sh [-a] <executable> <checker> <nb_tests> <list_size> <max_operations>
+```
 
-Effectue 100 tests avec des listes de 100 entiers aléatoires uniques (entre 0 et 99).
+| Argument           | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| `-a` *(optional)*  | Show the list of arguments when a test fails                 |
+| `<executable>`     | The `push_swap` executable to test                           |
+| `<checker>`        | The checker program (e.g., `checker_linux` or `checker_Mac`) |
+| `<nb_tests>`       | Number of random test cases to run                           |
+| `<list_size>`      | Size of the list to generate for each test                   |
+| `<max_operations>` | Maximum number of allowed operations per test                |
 
-Vérifie que push_swap ne dépasse jamais 700 instructions.
+Example
+```bash
+./test.sh -a ./push_swap ./checker_linux 100 50 550
+```
 
-Affiche une barre de progression en temps réel.
+📦 Requirements
 
-S’arrête immédiatement en cas d’échec.
+    bash
 
-| Argument           | Description                                   |
-| ------------------ | --------------------------------------------- |
-| `<executable>`     | Nom de votre exécutable `push_swap`           |
-| `<nb_tests>`       | Nombre de tests à exécuter                    |
-| `<taille_liste>`   | Taille de la liste aléatoire pour chaque test |
-| `<max_operations>` | Nombre maximum d'instructions autorisées      |
+    shuf (GNU coreutils)
 
-✅ Exemple de sortie
+    wc
 
-Progression : [##########################################......................] 50%
-...
-
-OK - Toutes les operations respectent la limite (700)
-
-🔴 En cas d’erreur :
-
-KO ➜ 752 operations (limite 700)
-
-Le script s'arrête dès qu'une opération dépasse la limite fixée.
-
-KO ➜ 722 instructions (limite 700)
-
-Sinon, à la fin :
-
-OK - Toutes les itérations respectent la limite (700)
+    A valid push_swap executable and compatible checker (e.g., from 42 project)

@@ -1,14 +1,9 @@
 #!/bin/bash
 
-show_args=false
+
 show_help=false
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
-
-if [[ "$1" == "-a" ]]; then
-    show_args=true
-    shift
-fi
 
 if [[ "$1" == "-help" ]]; then
     show_help=true
@@ -59,19 +54,16 @@ fi
 
 if [ "$show_help" = true ]; then
     printf "\
-    Usage: %s [-a] <nb_tests> <list_size> <max_operations>\n\
-    \n\
-    Description:\n\
-    Ce script teste 'push_swap'. Il trouve les exécutables automatiquement,\n\
-    même si vous le lancez depuis un sous-dossier de votre projet.\n\
-    \n\
-    Options:\n\
-    -a                  Affiche les arguments en cas d'échec d'un test.\n\
-    \n\
-    Arguments:\n\
-    <nb_tests>          Nombre de tests aléatoires à exécuter.\n\
-    <list_size>         Taille de la liste de nombres à trier.\n\
-    <max_operations>    Nombre maximal d'opérations autorisées.\n"
+Usage: %s <nb_tests> <list_size> <max_operations>\n\
+\n\
+Description:\n\
+Ce script teste 'push_swap'. Il trouve les exécutables automatiquement,\n\
+même si vous le lancez depuis un sous-dossier de votre projet.\n\
+\n\
+Arguments:\n\
+<nb_tests>          Nombre de tests aléatoires à exécuter.\n\
+<list_size>         Taille de la liste de nombres à trier.\n\
+<max_operations>    Nombre maximal d'opérations autorisées.\n"
     exit 0
 fi
 
@@ -101,13 +93,15 @@ print_progress_bar() {
     (( empty > 0 )) && bar+=$(printf "%0.s " $(seq 1 $empty))
 
     if [[ "$color" == "33" ]]; then
-    printf "\rProgression : \e[38;5;208m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
+        printf "\rProgression : \e[38;5;208m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
     else
-    printf "\rProgression : \e[%sm|%-*s|%3d%%\e[0m" "$color" "$bar_width" "$bar" "$percent"
+        printf "\rProgression : \e[%sm|%-*s|%3d%%\e[0m" "$color" "$bar_width" "$bar" "$percent"
     fi
 }
 
-##TEST 1
+clear
+
+## TEST 1
 echo -e "\n➤ Test 1 : Vérification avec $checker_name..."
 
 for ((i=1; i<=total; i++)); do
@@ -118,9 +112,6 @@ for ((i=1; i<=total; i++)); do
         sleep 0.5
         printf "\r\033[K"
         echo -e "\n\e[31m✘ KO avec $checker_name ➜ Résultat : $RESULT\e[0m"
-        if [ "$show_args" = true ]; then
-            echo -e "\e[33m  Arguments : $ARG\e[0m"
-        fi
         exit 1
     fi
 
@@ -132,7 +123,7 @@ echo -e "\e[92m✔ Toutes les vérifications avec $checker_name sont passées\e[
 
 sleep 0.5
 
-##TEST 2
+## TEST 2
 echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
 success=0
 force_red=false
@@ -146,9 +137,6 @@ for ((i=1; i<=total; i++)); do
         ((success++))
     else
         has_failed=true
-        if [ "$show_args" = true ]; then
-            echo -e "\n\e[33m⚠ Trop d'opérations ($INDEX > $max_moves)\n  ➤ Arguments : $ARG\e[0m"
-        fi
     fi
 
     remaining=$(( total - i ))
@@ -184,13 +172,9 @@ print_progress_bar $total $total $final_color
 printf "\r\033[K"
 
 if [ "$rate" -lt 50 ]; then
-    printf "\r\033[K"
     echo -e "\e[31m✘ Taux de réussite faible : $rate% ($success/$total tests ont respecté la limite)\e[0m"
 elif $has_failed; then
-    printf "\r\033[K"
     echo -e "\e[38;5;208m⚠ Taux de réussite partiel : $rate% ($success/$total tests ont respecté la limite)\e[0m"
 else
-    printf "\r\033[K"
     echo -e "\e[92m✔ Tous les tests respectent la limite ($rate%)\e[0m"
 fi
-

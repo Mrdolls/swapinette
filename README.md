@@ -21,26 +21,23 @@ The appropriate checker (checker_linux or checker_Mac) must also be present and 
 
 ## 📦 Usage
 ```bash
-swapinette [-a] <nb_tests> <list_size> <max_operations>
+swapinette <nb_tests> <list_size> <max_operations>
 ```
 | Argument           | Description                                           |
 | ------------------ | ----------------------------------------------------- |
-| `-a` *(optional)*  | Display the arguments when a test fails               |
 | `<nb_tests>`       | Number of random test cases to run                    |
 | `<list_size>`      | Number of elements to sort in each test (e.g., `100`) |
 | `<max_operations>` | Max allowed operations per test (e.g., `700`)         |
 
 ## 🧾 Example
 ```bash
-swapinette -a 100 50 550
+swapinette 100 50 550
 ```
 • Runs 100 tests
 
 • Each test uses a list of 50 integers
 
 • Fails if more than 550 operations are used
-
-• Shows the failing arguments if -a is enabled
 
 ## 💡 Smart Detection
 

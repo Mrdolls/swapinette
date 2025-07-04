@@ -41,6 +41,7 @@ checker=$2
 total=$3
 size=$4
 max_moves=$5
+p=0
 
 print_progress_bar() {
     local current=$1
@@ -58,7 +59,7 @@ print_progress_bar() {
 
     local bar=$(printf "%-${bar_width}s" "" | tr ' ' '#')
     bar=${bar:0:filled}$(printf "%-$((bar_width-filled))s" "")
-
+    p=$percent
     printf "\rProgress: [%s] %3d%%" "$bar" "$percent"
 }
 
@@ -72,6 +73,7 @@ for ((i=1; i<=total; i++)); do
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5
         printf "\r\033[K"
+        echo -e "\e[31mSuccess rate: $p%\e[0m"
         echo -e "\n\e[31m✘ KO with $checker ➜ Result: $RESULT\e[0m"
         if [ "$show_args" = true ]; then
             echo -e "\e[33mArguments: $ARG\e[0m"
@@ -96,6 +98,7 @@ for ((i=1; i<=total; i++)); do
     if [ "$INDEX" -gt "$max_moves" ]; then
         sleep 0.5
         printf "\r\033[K"
+        echo -e "\e[31mSuccess rate: $p%\e[0m"
         echo -e "\e[31m✘ KO ➜ $INDEX operations (limit $max_moves)\e[0m"
         if [ "$show_args" = true ]; then
             echo -e "\e[33mArguments: $ARG\e[0m"

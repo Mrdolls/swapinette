@@ -52,13 +52,6 @@ main() {
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' configuré.${C_RESET}"
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
     cd "$ORIGINAL_DIR"
-    if [ -n "$ZSH_VERSION" ]; then
-        echo -e "   \e[34msource ~/.zshrc\e[0m"
-    elif [ -n "$BASH_VERSION" ]; then
-        echo -e "   \e[34msource ~/.bashrc\e[0m"
-    else
-        echo -e "   \e[34msource $SHELL_CONFIG\e[0m"
-    fi
 }
 
 main

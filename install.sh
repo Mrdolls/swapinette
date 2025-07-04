@@ -53,11 +53,11 @@ main() {
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
     cd "$ORIGINAL_DIR"
     if [ -n "$ZSH_VERSION" ]; then
-        exec zsh
+        echo -e "   \e[34msource ~/.zshrc\e[0m"
     elif [ -n "$BASH_VERSION" ]; then
-        exec bash --rcfile "$SHELL_CONFIG"
+        echo -e "   \e[34msource ~/.bashrc\e[0m"
     else
-        exec "$SHELL"
+        echo -e "   \e[34msource $SHELL_CONFIG\e[0m"
     fi
 }
 

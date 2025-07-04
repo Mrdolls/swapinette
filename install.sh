@@ -35,17 +35,11 @@ main() {
     SHELL_CONFIG=""
     shell_name=$(basename "$SHELL")
 
-    case "$shell_name" in
-        zsh)
-        SHELL_CONFIG="$HOME/.zshrc"
-        ;;
-        bash)
-        SHELL_CONFIG="$HOME/.bashrc"
-        ;;
-        *)
-        SHELL_CONFIG="$HOME/.profile"
-        ;;
-        esac
+    if [ "$base_name" = "zsh" ]; then
+    SHELL_CONFIG="$HOME/.zshrc"
+    else
+    SHELL_CONFIG="$HOME/.bashrc"
+    fi
     echo -e "Fichier de configuration détecté : ${C_BLUE}$SHELL_CONFIG${C_RESET}"
 
     ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/swapinette.sh'"

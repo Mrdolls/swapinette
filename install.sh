@@ -60,6 +60,10 @@ main() {
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' configuré.${C_RESET}"
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
     cd "$ORIGINAL_DIR"
+    case "$base_name" in
+        zsh)   zsh ;;
+        bash)  bash;;
+    esac
 }
 
 main

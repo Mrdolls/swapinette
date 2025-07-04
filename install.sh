@@ -13,56 +13,56 @@ C_YELLOW='\033[0;33m'
 ORIGINAL_DIR="$(pwd)"
 
 main() {
-    echo -e "${C_BLUE}Bienvenue dans l'installateur de Swapinette !${C_RESET}"
+    echo -e "${C_BLUE}Welcome to the Swapinette installer!${C_RESET}"
 
     if ! command -v git &> /dev/null; then
-        echo -e "${C_RED}Erreur : 'git' n'est pas installé. Veuillez l'installer avant de continuer.${C_RESET}"
+        echo -e "${C_RED}Error: 'git' is not installed. Please install it before proceeding.${C_RESET}"
         exit 1
     fi
-    echo -e "${C_GREEN}✔ Dépendance 'git' trouvée.${C_RESET}"
+    echo -e "${C_GREEN}✔ 'git' dependency found.${C_RESET}"
 
     if [ -d "$INSTALL_DIR" ]; then
-        echo -e "${C_YELLOW}Dossier trouvé. Mise à jour forcée vers la dernière version...${C_RESET}"
+        echo -e "${C_YELLOW}Existing directory found. Forcing update to the latest version...${C_RESET}"
         cd "$INSTALL_DIR"
         git fetch origin > /dev/null 2>&1
-        git reset --hard origin/main || { echo -e "${C_RED}La mise à jour forcée a échoué.${C_RESET}"; exit 1; }
+        git reset --hard origin/main || { echo -e "${C_RED}Forced update failed.${C_RESET}"; exit 1; }
     else
-        echo -e "Téléchargement de l'outil..."
-        git clone "$REPO_URL" "$INSTALL_DIR" || { echo -e "${C_RED}Le téléchargement a échoué.${C_RESET}"; exit 1; }
+        echo -e "Cloning the tool..."
+        git clone "$REPO_URL" "$INSTALL_DIR" || { echo -e "${C_RED}Failed to download the tool.${C_RESET}"; exit 1; }
     fi
-    echo -e "${C_GREEN}✔ Outil téléchargé/mis à jour dans $INSTALL_DIR.${C_RESET}"
+    echo -e "${C_GREEN}✔ Tool downloaded/updated in $INSTALL_DIR.${C_RESET}"
 
     SHELL_CONFIG=""
     shell_name=$(basename "$SHELL")
 
-    # Détection fiable du nom du shell courant
+    # Reliable detection of the current shell name
     if [ -n "$SHELL" ]; then
         base_name=$(basename "$SHELL")
     else
         base_name=$(ps -p $$ -o comm=)
     fi
 
-    # Sélection du fichier de configuration selon le shell
+    # Choose the correct shell config file
     case "$base_name" in
         zsh)   SHELL_CONFIG="$HOME/.zshrc" ;;
         bash)  SHELL_CONFIG="$HOME/.bashrc" ;;
         *)     SHELL_CONFIG="$HOME/.profile" ;;
     esac
-    echo -e "Fichier de configuration détecté : ${C_BLUE}$SHELL_CONFIG${C_RESET}"
+    echo -e "Detected shell config file: ${C_BLUE}$SHELL_CONFIG${C_RESET}"
 
     ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/swapinette.sh'"
     if ! grep -qF "$ALIAS_COMMAND" "$SHELL_CONFIG"; then
-        echo "Ajout de l'alias au fichier de configuration..."
-        echo -e "\n# Alias pour Swapinette" >> "$SHELL_CONFIG"
+        echo "Adding alias to shell config file..."
+        echo -e "\n# Alias for Swapinette" >> "$SHELL_CONFIG"
         echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
     fi
     chmod +x "$INSTALL_DIR/swapinette.sh"
-    echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' configuré.${C_RESET}"
-    echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
+    echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
+    echo -e "\n${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     cd "$ORIGINAL_DIR"
     case "$base_name" in
         zsh)   zsh ;;
-        bash)  bash;;
+        bash)  bash ;;
     esac
 }
 

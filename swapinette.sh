@@ -90,7 +90,7 @@ if [ "$show_help" = true ]; then
     exit 0
 fi
 
-if [ "$#" -ne 4 ]; then
+if [ "$#" -ne 3 ]; then
     printf "\e[31m✘ Erreur:\e[0m Arguments invalides. 3 attendus, $# reçus.\nPour plus d'infos ➤ utilisez \e[34m-help\e[0m\n"
     exit 1
 fi

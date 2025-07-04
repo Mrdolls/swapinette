@@ -34,6 +34,7 @@ main() {
 
     SHELL_CONFIG=""
     shell_name=$(basename "$SHELL")
+    echo ">$base_name<"
 
     if [ "$base_name" = "zsh" ]; then
     SHELL_CONFIG="$HOME/.zshrc"

@@ -170,9 +170,9 @@ print_progress_bar $total $total $final_color
 printf "\r\033[K"
 
 if [ "$rate" -lt 50 ]; then
-    echo -e "\e[31m✘ Low success rate: $rate% ($success/$total tests were within the limit)\e[0m"
+    echo -e "\e[31m✘ Low success rate: $rate% ($success/$total tests were within the limit($max_moves))\e[0m"
 elif $has_failed; then
-    echo -e "\e[38;5;208m⚠ Partial success: $rate% ($success/$total tests were within the limit)\e[0m"
+    echo -e "\e[38;5;208m⚠ Partial success: $rate% ($success/$total tests were within the limit($max_moves))\e[0m"
 else
-    echo -e "\e[92m✔ All tests respected the operation limit ($rate%)\e[0m"
+    echo -e "\e[92m✔ All tests respected the operation limit($max_moves) ($rate%)\e[0m"
 fi

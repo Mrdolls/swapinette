@@ -58,10 +58,6 @@ main() {
 
     # 5. Instructions finales et relancement du shell
     echo -e "\n${C_GREEN}🎉 Installation terminée avec succès !${C_RESET}"
-    echo -e "${C_YELLOW}Pour rendre la commande disponible immédiatement, le shell va se relancer...${C_RESET}"
-    sleep 2 # Pause pour que l'utilisateur lise le message
-
-    # Remplace le processus shell actuel par un nouveau, appliquant les changements
     exec "$SHELL"
 }
 

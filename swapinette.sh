@@ -31,7 +31,6 @@ find_upwards() {
     return 1
 }
 
-echo "🔎 Recherche de l'exécutable 'push_swap' en remontant les dossiers..."
 exec_name=$(find_upwards "push_swap")
 
 if [ -z "$exec_name" ]; then
@@ -39,9 +38,7 @@ if [ -z "$exec_name" ]; then
     echo -e "  Assurez-vous qu'il est compilé et exécutable (chmod +x push_swap)."
     exit 1
 fi
-echo -e "\e[92m✔ push_swap trouvé : $exec_name\e[0m"
 
-echo "🔎 Détection de l'OS et recherche du checker..."
 os_type=$(uname -s)
 case "$os_type" in
     Linux*)  checker_name="checker_linux";;
@@ -59,7 +56,6 @@ if [ -z "$checker" ]; then
     echo -e "  Assurez-vous qu'il est présent et exécutable (chmod +x $checker_name)."
     exit 1
 fi
-echo -e "\e[92m✔ Checker trouvé : $checker\e[0m"
 
 if [ "$show_help" = true ]; then
     printf "\

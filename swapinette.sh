@@ -3,6 +3,8 @@
 show_args=false
 
 show_help=false
+TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
+(( TERM_WIDTH > 80 )) && TERM_WIDTH=80
 
 if [[ "$1" == "-a" ]]; then
     show_args=true
@@ -47,21 +49,36 @@ print_progress_bar() {
     local current=$1
     local total=$2
 
-    local width=${COLUMNS:-80}
-    (( width > 100 )) && width=100
-    (( width < 10 )) && width=10
+    local width=$TERM_WIDTH
+    (( width < 40 )) && width=40  # limite min
+
+    (( width > 120 )) && width=120
+    (( width < 40 )) && width=40
 
     local bar_width=$(( width - 20 ))
-    (( bar_width < 10 )) && bar_width=10
-
     local percent=$(( current * 100 / total ))
     local filled=$(( percent * bar_width / 100 ))
 
-    local bar=$(printf "%-${bar_width}s" "" | tr ' ' '#')
-    bar=${bar:0:filled}$(printf "%-$((bar_width-filled))s" "")
+    if [ "$percent" -eq 100 ]; then
+        filled=$bar_width
+        empty=0
+    else
+        empty=$(( bar_width - filled ))
+    fi
+
+    local bar=""
+    if (( filled > 0 )); then
+        bar+=$(printf "%0.s█" $(seq 1 $filled))
+    fi
+    if (( empty > 0 )); then
+        bar+=$(printf "%0.s░" $(seq 1 $empty))
+    fi
     p=$percent
-    printf "\rProgress: [%s] %3d%%" "$bar" "$percent"
+    printf "\rProgress: \e[92m%-*s %3d%%\e[0m" "$bar_width" "$bar" "$percent"
 }
+
+
+
 
 ### Test 1
 echo -e "\n➤ Test 1: Verifying with $checker..."
@@ -73,10 +90,9 @@ for ((i=1; i<=total; i++)); do
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\e[31mSuccess rate: $p%\e[0m"
         echo -e "\n\e[31m✘ KO with $checker ➜ Result: $RESULT\e[0m"
         if [ "$show_args" = true ]; then
-            echo -e "\e[33mArguments: $ARG\e[0m"
+            echo -e "\e[33m  Arguments: $ARG\e[0m"
         fi
         exit 1
     fi
@@ -98,10 +114,9 @@ for ((i=1; i<=total; i++)); do
     if [ "$INDEX" -gt "$max_moves" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\e[31mSuccess rate: $p%\e[0m"
         echo -e "\e[31m✘ KO ➜ $INDEX operations (limit $max_moves)\e[0m"
         if [ "$show_args" = true ]; then
-            echo -e "\e[33mArguments: $ARG\e[0m"
+            echo -e "\e[33m  Arguments: $ARG\e[0m"
         fi
         exit 1
     fi

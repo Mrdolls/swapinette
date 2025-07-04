@@ -54,7 +54,7 @@ for ((i=1; i<=total; i++)); do
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\n\e[31mKO with $checker ➜ Result: $RESULT\e[0m"
+        echo -e "\n\e[31m✘ KO with $checker ➜ Result: $RESULT\e[0m"
         if [ "$show_args" = true ]; then
             echo -e "\e[33mArguments: $ARG\e[0m"
         fi
@@ -81,7 +81,7 @@ for ((i=1; i<=total; i++)); do
     if [ "$INDEX" -gt "$max_moves" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\e[31mKO ➜ $INDEX operations (limit $max_moves)\e[0m"
+        echo -e "\e[31m✘ KO ➜ $INDEX operations (limit $max_moves)\e[0m"
         if [ "$show_args" = true ]; then
             echo -e "\e[33mArguments: $ARG\e[0m"
         fi

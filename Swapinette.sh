@@ -11,7 +11,7 @@ total=$3
 size=$4
 max_moves=$5
 
-### Test 1 : Vérification avec le checker choisi
+### Test 1
 echo -e "\n➤ Test 1 : Vérification avec $checker..."
 
 for ((i=1; i<=total; i++)); do
@@ -19,6 +19,8 @@ for ((i=1; i<=total; i++)); do
     RESULT=$(./"$exec_name" $ARG | ./"$checker" $ARG)
 
     if [ "$RESULT" != "OK" ]; then
+        sleep 0.5
+        printf "\r\033[K"
         echo -e "\n\e[31mKO avec $checker ➜ Résultat: $RESULT\e[0m"
         exit 1
     fi
@@ -28,10 +30,12 @@ for ((i=1; i<=total; i++)); do
     bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
     printf "\rProgression : [%-100s] %d%%" "$bar" "$percent"
 done
+sleep 0.5
+printf "\r\033[K"
+echo -e "\e[92m✔ Toutes les vérifications $checker sont OK\e[0m"
 
-echo -e "\n\e[92m✔ Toutes les vérifications $checker sont OK\e[0m"
-
-### Test 2 : Vérification du nombre d'opérations (exécuté uniquement si checker = OK)
+### Test 2
+sleep 0.5
 echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
 
 for ((i=1; i<=total; i++)); do
@@ -39,7 +43,9 @@ for ((i=1; i<=total; i++)); do
     INDEX="$(./"$exec_name" $ARG | wc -l)"
 
     if [ "$INDEX" -gt "$max_moves" ]; then
-        echo -e "\n\e[31mKO ➜ $INDEX opérations (limite $max_moves)\e[0m"
+        sleep 0.5
+        printf "\r\033[K"
+        echo -e "\e[31mKO ➜ $INDEX opérations (limite $max_moves)\e[0m"
         exit 1
     fi
 
@@ -48,5 +54,6 @@ for ((i=1; i<=total; i++)); do
     bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
     printf "\rProgression : [%-100s] %d%%" "$bar" "$percent"
 done
-
-echo -e "\n\e[92m✔ Toutes les opérations sont sous la limite ($max_moves operations)\e[0m"
+sleep 0.5
+printf "\r\033[K"
+echo -e "\e[92m✔ Toutes les opérations sont sous la limite ($max_moves operations)\e[0m"

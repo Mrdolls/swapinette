@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# --- Options et configuration initiale ---
 show_args=false
 show_help=false
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
 
-# --- Traitement des options (-a, -help) ---
 if [[ "$1" == "-a" ]]; then
     show_args=true
     shift
@@ -17,29 +15,22 @@ if [[ "$1" == "-help" ]]; then
     shift
 fi
 
-# --- FONCTION DE RECHERCHE VERS LE HAUT ---
-# Cherche un fichier en remontant dans les dossiers parents.
-# Usage: find_upwards <nom_du_fichier>
 find_upwards() {
     local filename="$1"
-    local path="$PWD" # Commence la recherche depuis le dossier actuel
+    local path="$PWD"
 
     while [ "$path" != "/" ]; do
-        # Cherche le fichier *uniquement* dans le dossier courant (pas les sous-dossiers)
         local found
         found=$(find "$path" -maxdepth 1 -name "$filename" -type f -executable)
         if [ -n "$found" ]; then
             echo "$found"
-            return 0 # Succès
+            return 0
         fi
-        # Remonte au dossier parent
         path=$(dirname "$path")
     done
-    return 1 # Échec, fichier non trouvé
+    return 1
 }
 
-
-# --- Auto-détection des exécutables ---
 echo "🔎 Recherche de l'exécutable 'push_swap' en remontant les dossiers..."
 exec_name=$(find_upwards "push_swap")
 
@@ -70,8 +61,6 @@ if [ -z "$checker" ]; then
 fi
 echo -e "\e[92m✔ Checker trouvé : $checker\e[0m"
 
-
-# --- Affichage de l'aide et validation des arguments ---
 if [ "$show_help" = true ]; then
     printf "\
     Usage: %s [-a] <nb_tests> <list_size> <max_operations>\n\
@@ -99,7 +88,6 @@ total=$1
 size=$2
 max_moves=$3
 
-# --- Fonctions ---
 print_progress_bar() {
     local current=$1
     local total=$2
@@ -117,8 +105,6 @@ print_progress_bar() {
     printf "\rProgression : \e[92m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
 }
 
-# --- Section des Tests ---
-### Test 1: Vérification de la validité du tri
 echo -e "\n➤ Test 1 : Vérification avec $checker_name..."
 
 for ((i=1; i<=total; i++)); do
@@ -141,7 +127,6 @@ sleep 0.5
 printf "\r\033[K"
 echo -e "\e[92m✔ Toutes les vérifications avec $checker_name sont passées\e[0m"
 
-### Test 2: Vérification du nombre d'opérations
 sleep 0.5
 echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
 

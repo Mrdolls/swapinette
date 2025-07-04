@@ -1,8 +1,12 @@
 #!/bin/bash
 
 show_args=false
-
 show_help=false
+exec_name=$1
+checker=$2
+total=$3
+size=$4
+max_moves=$5
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
 
@@ -38,13 +42,6 @@ if [ "$#" -ne 5 ]; then
     exit 1
 fi
 
-exec_name=$1
-checker=$2
-total=$3
-size=$4
-max_moves=$5
-p=0
-
 print_progress_bar() {
     local current=$1
     local total=$2
@@ -71,14 +68,10 @@ print_progress_bar() {
         bar+=$(printf "%0.s█" $(seq 1 $filled))
     fi
     if (( empty > 0 )); then
-        bar+=$(printf "%0.s░" $(seq 1 $empty))
+        bar+=$(printf "%0.s " $(seq 1 $empty))
     fi
-    p=$percent
-    printf "\rProgress: \e[92m%-*s %3d%%\e[0m" "$bar_width" "$bar" "$percent"
+    printf "\rProgress: \e[92m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
 }
-
-
-
 
 ### Test 1
 echo -e "\n➤ Test 1: Verifying with $checker..."
@@ -126,4 +119,3 @@ done
 sleep 0.5
 printf "\r\033[K"
 echo -e "\e[92m✔ All operations are within the limit ($max_moves operations)\e[0m"
-

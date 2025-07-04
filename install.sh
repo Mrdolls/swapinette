@@ -33,13 +33,19 @@ main() {
     echo -e "${C_GREEN}✔ Outil téléchargé/mis à jour dans $INSTALL_DIR.${C_RESET}"
 
     SHELL_CONFIG=""
-    if [ -n "$ZSH_VERSION" ]; then
+    shell_name=$(basename "$SHELL")
+
+    case "$shell_name" in
+        zsh)
         SHELL_CONFIG="$HOME/.zshrc"
-    elif [ -n "$BASH_VERSION" ]; then
+        ;;
+        bash)
         SHELL_CONFIG="$HOME/.bashrc"
-    else
+        ;;
+        *)
         SHELL_CONFIG="$HOME/.profile"
-    fi
+        ;;
+        esac
     echo -e "Fichier de configuration détecté : ${C_BLUE}$SHELL_CONFIG${C_RESET}"
 
     ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/swapinette.sh'"

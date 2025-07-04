@@ -42,7 +42,25 @@ total=$3
 size=$4
 max_moves=$5
 
+print_progress_bar() {
+    local current=$1
+    local total=$2
 
+    local width=${COLUMNS:-80}
+    (( width > 100 )) && width=100
+    (( width < 10 )) && width=10
+
+    local bar_width=$(( width - 20 ))
+    (( bar_width < 10 )) && bar_width=10
+
+    local percent=$(( current * 100 / total ))
+    local filled=$(( percent * bar_width / 100 ))
+
+    local bar=$(printf "%-${bar_width}s" "" | tr ' ' '#')
+    bar=${bar:0:filled}$(printf "%-$((bar_width-filled))s" "")
+
+    printf "\rProgress: [%s] %3d%%" "$bar" "$percent"
+}
 
 ### Test 1
 echo -e "\n➤ Test 1: Verifying with $checker..."
@@ -61,10 +79,7 @@ for ((i=1; i<=total; i++)); do
         exit 1
     fi
 
-    percent=$(( i * 100 / total ))
-    filled=$(( percent ))
-    bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
-    printf "\rProgress: [%-100s] %d%%" "$bar" "$percent"
+    print_progress_bar $i $total
 done
 sleep 0.5
 printf "\r\033[K"
@@ -88,11 +103,9 @@ for ((i=1; i<=total; i++)); do
         exit 1
     fi
 
-    percent=$(( i * 100 / total ))
-    filled=$(( percent ))
-    bar=$(printf "%-${filled}s" "#" | tr ' ' '#')
-    printf "\rProgress: [%-100s] %d%%" "$bar" "$percent"
+    print_progress_bar $i $total
 done
 sleep 0.5
 printf "\r\033[K"
 echo -e "\e[92m✔ All operations are within the limit ($max_moves operations)\e[0m"
+

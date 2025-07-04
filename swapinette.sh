@@ -87,6 +87,7 @@ max_moves=$3
 print_progress_bar() {
     local current=$1
     local total=$2
+    local color=$3
     local width=$(( TERM_WIDTH > 120 ? 120 : (TERM_WIDTH < 40 ? 40 : TERM_WIDTH) ))
     local bar_width=$(( width - 20 ))
     local percent=$(( current * 100 / total ))
@@ -98,9 +99,15 @@ print_progress_bar() {
     local bar=""
     (( filled > 0 )) && bar+=$(printf "%0.s█" $(seq 1 $filled))
     (( empty > 0 )) && bar+=$(printf "%0.s " $(seq 1 $empty))
-    printf "\rProgression : \e[92m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
+
+    if [[ "$color" == "33" ]]; then
+    printf "\rProgression : \e[38;5;208m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
+    else
+    printf "\rProgression : \e[%sm|%-*s|%3d%%\e[0m" "$color" "$bar_width" "$bar" "$percent"
+    fi
 }
 
+##TEST 1
 echo -e "\n➤ Test 1 : Vérification avec $checker_name..."
 
 for ((i=1; i<=total; i++)); do
@@ -117,31 +124,73 @@ for ((i=1; i<=total; i++)); do
         exit 1
     fi
 
-    print_progress_bar $i $total
+    print_progress_bar $i $total 92
 done
 sleep 0.5
 printf "\r\033[K"
 echo -e "\e[92m✔ Toutes les vérifications avec $checker_name sont passées\e[0m"
 
 sleep 0.5
+
+##TEST 2
 echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
+success=0
+force_red=false
+has_failed=false
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 0-$(($size - 1)) -n $size | tr '\n' ' ')"
     INDEX=$("$exec_name" $ARG | wc -l | tr -d ' ')
 
-    if [ "$INDEX" -gt "$max_moves" ]; then
-        sleep 0.5
-        printf "\r\033[K"
-        echo -e "\e[31m✘ KO ➜ $INDEX opérations (limite $max_moves)\e[0m"
+    if [ "$INDEX" -le "$max_moves" ]; then
+        ((success++))
+    else
+        has_failed=true
         if [ "$show_args" = true ]; then
-            echo -e "\e[33m  Arguments : $ARG\e[0m"
+            echo -e "\n\e[33m⚠ Trop d'opérations ($INDEX > $max_moves)\n  ➤ Arguments : $ARG\e[0m"
         fi
-        exit 1
     fi
 
-    print_progress_bar $i $total
+    remaining=$(( total - i ))
+    max_possible=$(( success + remaining ))
+    if ! $force_red && [ $(( max_possible * 100 / total )) -lt 50 ]; then
+        force_red=true
+    fi
+
+    if $force_red; then
+        current_color=31
+    elif $has_failed; then
+        current_color=33
+    else
+        current_color=92
+    fi
+
+    print_progress_bar $i $total $current_color
 done
+
+# 🔚 Fin
+rate=$(( success * 100 / total ))
 sleep 0.5
+
+if [ "$rate" -lt 50 ]; then
+    final_color=31
+elif $has_failed; then
+    final_color=33
+else
+    final_color=92
+fi
+
+print_progress_bar $total $total $final_color
 printf "\r\033[K"
-echo -e "\e[92m✔ Toutes les opérations respectent la limite ($max_moves opérations)\e[0m"
+
+if [ "$rate" -lt 50 ]; then
+    printf "\r\033[K"
+    echo -e "\e[31m✘ Taux de réussite faible : $rate% ($success/$total tests ont respecté la limite)\e[0m"
+elif $has_failed; then
+    printf "\r\033[K"
+    echo -e "\e[38;5;208m⚠ Taux de réussite partiel : $rate% ($success/$total tests ont respecté la limite)\e[0m"
+else
+    printf "\r\033[K"
+    echo -e "\e[92m✔ Tous les tests respectent la limite ($rate%)\e[0m"
+fi
+

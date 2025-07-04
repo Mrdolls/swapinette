@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+clear
 show_help=false
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
@@ -29,8 +29,8 @@ find_upwards() {
 exec_name=$(find_upwards "push_swap")
 
 if [ -z "$exec_name" ]; then
-    echo -e "\e[31m✘ Erreur : L'exécutable 'push_swap' n'a pas été trouvé en remontant depuis votre position.\e[0m"
-    echo -e "  Assurez-vous qu'il est compilé et exécutable (chmod +x push_swap)."
+    echo -e "\e[31m✘ Error: 'push_swap' executable not found when searching upward from current directory.\e[0m"
+    echo -e "  Make sure it is compiled and marked as executable (chmod +x push_swap)."
     exit 1
 fi
 
@@ -39,7 +39,7 @@ case "$os_type" in
     Linux*)  checker_name="checker_linux";;
     Darwin*) checker_name="checker_Mac";;
     *)
-        echo -e "\e[31m✘ Erreur : OS '$os_type' non supporté.\e[0m"
+        echo -e "\e[31m✘ Error: OS '$os_type' not supported.\e[0m"
         exit 1
         ;;
 esac
@@ -47,8 +47,8 @@ esac
 checker=$(find_upwards "$checker_name")
 
 if [ -z "$checker" ]; then
-    echo -e "\e[31m✘ Erreur : Le checker '$checker_name' n'a pas été trouvé en remontant depuis votre position.\e[0m"
-    echo -e "  Assurez-vous qu'il est présent et exécutable (chmod +x $checker_name)."
+    echo -e "\e[31m✘ Error: Checker '$checker_name' not found when searching upward from current directory.\e[0m"
+    echo -e "  Make sure it is present and marked as executable (chmod +x $checker_name)."
     exit 1
 fi
 
@@ -57,18 +57,18 @@ if [ "$show_help" = true ]; then
 Usage: %s <nb_tests> <list_size> <max_operations>\n\
 \n\
 Description:\n\
-Ce script teste 'push_swap'. Il trouve les exécutables automatiquement,\n\
-même si vous le lancez depuis un sous-dossier de votre projet.\n\
+This script tests 'push_swap'. It auto-detects executables,\n\
+even if launched from a subfolder of your project.\n\
 \n\
 Arguments:\n\
-<nb_tests>          Nombre de tests aléatoires à exécuter.\n\
-<list_size>         Taille de la liste de nombres à trier.\n\
-<max_operations>    Nombre maximal d'opérations autorisées.\n"
+<nb_tests>          Number of random tests to run.\n\
+<list_size>         Size of the list to sort.\n\
+<max_operations>    Maximum number of allowed operations.\n"
     exit 0
 fi
 
 if [ "$#" -ne 3 ]; then
-    printf "\e[31m✘ Erreur:\e[0m Arguments invalides. 3 attendus, $# reçus.\nPour plus d'infos ➤ utilisez \e[34m-help\e[0m\n"
+    printf "\e[31m✘ Error:\e[0m Invalid arguments. Expected 3, got $#.\nUse \e[34m-help\e[0m for more information.\n"
     exit 1
 fi
 
@@ -93,16 +93,14 @@ print_progress_bar() {
     (( empty > 0 )) && bar+=$(printf "%0.s " $(seq 1 $empty))
 
     if [[ "$color" == "33" ]]; then
-        printf "\rProgression : \e[38;5;208m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
+        printf "\rProgress: \e[38;5;208m|%-*s|%3d%%\e[0m" "$bar_width" "$bar" "$percent"
     else
-        printf "\rProgression : \e[%sm|%-*s|%3d%%\e[0m" "$color" "$bar_width" "$bar" "$percent"
+        printf "\rProgress: \e[%sm|%-*s|%3d%%\e[0m" "$color" "$bar_width" "$bar" "$percent"
     fi
 }
 
-clear
-
 ## TEST 1
-echo -e "\n➤ Test 1 : Vérification avec $checker_name..."
+echo -e "\n➤ Test 1: Validating output with $checker_name..."
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 1-$(($size)) -n $size | tr '\n' ' ')"
@@ -111,7 +109,7 @@ for ((i=1; i<=total; i++)); do
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5
         printf "\r\033[K"
-        echo -e "\n\e[31m✘ KO avec $checker_name ➜ Résultat : $RESULT\e[0m"
+        echo -e "\n\e[31m✘ KO with $checker_name ➜ Result: $RESULT\e[0m"
         exit 1
     fi
 
@@ -119,12 +117,12 @@ for ((i=1; i<=total; i++)); do
 done
 sleep 0.5
 printf "\r\033[K"
-echo -e "\e[92m✔ Toutes les vérifications avec $checker_name sont passées\e[0m"
+echo -e "\e[92m✔ All output validations passed with $checker_name\e[0m"
 
 sleep 0.5
 
 ## TEST 2
-echo -e "\n➤ Test 2 : Vérification du nombre d'opérations..."
+echo -e "\n➤ Test 2: Checking number of operations..."
 success=0
 force_red=false
 has_failed=false
@@ -156,7 +154,7 @@ for ((i=1; i<=total; i++)); do
     print_progress_bar $i $total $current_color
 done
 
-# 🔚 Fin
+# 🔚 End
 rate=$(( success * 100 / total ))
 sleep 0.5
 
@@ -172,9 +170,9 @@ print_progress_bar $total $total $final_color
 printf "\r\033[K"
 
 if [ "$rate" -lt 50 ]; then
-    echo -e "\e[31m✘ Taux de réussite faible : $rate% ($success/$total tests ont respecté la limite)\e[0m"
+    echo -e "\e[31m✘ Low success rate: $rate% ($success/$total tests were within the limit)\e[0m"
 elif $has_failed; then
-    echo -e "\e[38;5;208m⚠ Taux de réussite partiel : $rate% ($success/$total tests ont respecté la limite)\e[0m"
+    echo -e "\e[38;5;208m⚠ Partial success: $rate% ($success/$total tests were within the limit)\e[0m"
 else
-    echo -e "\e[92m✔ Tous les tests respectent la limite ($rate%)\e[0m"
+    echo -e "\e[92m✔ All tests respected the operation limit ($rate%)\e[0m"
 fi

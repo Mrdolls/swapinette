@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO_URL="git@github.com:Mrdolls/swapinette.git"
+REPO_URL="REPO_URL="https://github.com/Mrdolls/swapinette.git"
 INSTALL_DIR="$HOME/.swapinette"
 COMMAND_NAME="swapinette"
 

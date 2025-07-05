@@ -16,11 +16,13 @@ This will download and run the tester directly from GitHub — no need to clone 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Mrdolls/swapinette/refs/heads/main/install.sh)"
 ```
 
+---
 
-## ✅ Requirements
+## ✅ Requirements  
+Your `push_swap` binary must be compiled and located in the current or any parent directory.  
+The corresponding checker (`checker_linux` or `checker_Mac`) must also be available and executable.
 
-Your push_swap binary must be compiled and present (in the current or a parent directory).
-The appropriate checker (checker_linux or checker_Mac) must also be present and executable.
+---
 
 ## 📦 Usage
 ```bash
@@ -32,6 +34,8 @@ swapinette <nb_tests> <list_size> <max_operations>
 | `<list_size>`      | Number of elements to sort in each test (e.g., `100`) |
 | `<max_operations>` | Max allowed operations per test (e.g., `700`)         |
 
+---
+
 ## 🧾 Example
 ```bash
 swapinette 100 50 550
@@ -42,9 +46,13 @@ swapinette 100 50 550
 
 • Fails if more than 550 operations are used
 
+---
+
 ## 💡 Smart Detection
 
 You can launch the script from any subfolder of your project. It will automatically search upward to locate push_swap and the correct checker binary.
+
+---
 
 ## 🛠 OS Compatibility
 

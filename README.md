@@ -6,6 +6,8 @@
 - Checks the number of operations
 - Displays a clean progress bar
 
+- ![Demo](assets/demo.gif)
+
 ---
 
 ## 🚀 Quick Installation

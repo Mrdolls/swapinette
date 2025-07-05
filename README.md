@@ -6,7 +6,7 @@
 - Checks the number of operations
 - Displays a clean progress bar
 
-- ![Demo](assets/demo.gif)
+![Demo](read.gif)
 
 ---
 

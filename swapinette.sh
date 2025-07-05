@@ -154,7 +154,6 @@ for ((i=1; i<=total; i++)); do
     print_progress_bar $i $total $current_color
 done
 
-# 🔚 End
 rate=$(( success * 100 / total ))
 sleep 0.5
 

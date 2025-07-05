@@ -6,7 +6,7 @@
 - Checks the number of operations
 - Displays a clean progress bar
 
-![Demo](read.gif)
+![Demo](src/read.gif)
 
 ---
 

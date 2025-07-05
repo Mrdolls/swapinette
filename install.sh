@@ -13,6 +13,7 @@ C_YELLOW='\033[0;33m'
 ORIGINAL_DIR="$(pwd)"
 
 main() {
+    clear
     echo -e "${C_BLUE}Welcome to the Swapinette installer!${C_RESET}"
 
     if ! command -v git &> /dev/null; then
@@ -58,7 +59,10 @@ main() {
     fi
     chmod +x "$INSTALL_DIR/swapinette.sh"
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
-    echo -e "\n${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
+    sleep 3
+    clear
+    echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
+    echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"
     case "$base_name" in
         zsh)   zsh ;;

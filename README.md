@@ -6,7 +6,7 @@
 - Checks the number of operations
 - Displays a clean progress bar
 
-![Demo](src/read.gif)
+![read](https://github.com/user-attachments/assets/ad660d2f-199a-4cc0-b7ea-4a5f1790fa6c)
 
 ---
 
@@ -15,6 +15,7 @@ This will download and run the tester directly from GitHub — no need to clone 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Mrdolls/swapinette/refs/heads/main/install.sh)"
 ```
+
 
 ## ✅ Requirements
 

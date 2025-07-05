@@ -6,7 +6,7 @@
 - Checks the number of operations
 - Displays a clean progress bar
 
-![read](https://github.com/user-attachments/assets/ad660d2f-199a-4cc0-b7ea-4a5f1790fa6c)
+![update](https://github.com/user-attachments/assets/2ae3ac8d-163d-4bf1-b904-e96a2e56385e)
 
 ---
 

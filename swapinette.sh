@@ -124,12 +124,15 @@ sleep 0.5
 ## TEST 2
 echo -e "\n➤ Test 2: Checking number of operations..."
 success=0
+total_ops=0
 force_red=false
 has_failed=false
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 0-$(($size - 1)) -n $size | tr '\n' ' ')"
     INDEX=$("$exec_name" $ARG | wc -l | tr -d ' ')
+
+    total_ops=$((total_ops + INDEX))
 
     if [ "$INDEX" -le "$max_moves" ]; then
         ((success++))
@@ -155,6 +158,7 @@ for ((i=1; i<=total; i++)); do
 done
 
 rate=$(( success * 100 / total ))
+average=$(( total_ops / total ))
 sleep 0.5
 
 if [ "$rate" -lt 50 ]; then
@@ -169,9 +173,9 @@ print_progress_bar $total $total $final_color
 printf "\r\033[K"
 
 if [ "$rate" -lt 50 ]; then
-    echo -e "\e[31m✘ Low success rate: $rate% ($success/$total tests were within the limit($max_moves))\e[0m"
+    echo -e "\e[31m✘ Low success rate: $rate% ($success/$total tests were within the limit ($max_moves)) ~ Average: $average ops\e[0m"
 elif $has_failed; then
-    echo -e "\e[38;5;208m⚠ Partial success: $rate% ($success/$total tests were within the limit($max_moves))\e[0m"
+    echo -e "\e[38;5;208m⚠ Partial success: $rate% ($success/$total tests were within the limit ($max_moves)) ~ Average: $average ops\e[0m"
 else
-    echo -e "\e[92m✔ All tests respected the operation limit($max_moves) ($rate%)\e[0m"
+    echo -e "\e[92m✔ All tests respected the operation limit ($max_moves) ($rate%) ~ Average: $average ops\e[0m"
 fi

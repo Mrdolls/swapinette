@@ -53,8 +53,14 @@ esac
 
 checker_path="$SCRIPT_DIR/checker_os/$checker_name"
 
+if [ ! -f "$checker_path" ]; then
+    echo -e "\e[31m✘ Error: Checker not found at path: '$checker_path'\e[0m"
+    exit 1
+fi
+
 if [ ! -x "$checker_path" ]; then
-    echo -e "\e[31m✘ Error: Checker '$checker_name' not found in ./checker_os or is not executable.\e[0m"
+    echo -e "\e[31m✘ Error: Checker found but is not executable: '$checker_path'\e[0m"
+    echo -e "Run: chmod +x \"$checker_path\""
     exit 1
 fi
 

@@ -52,6 +52,7 @@ case "$os_type" in
 esac
 
 checker_path="$SCRIPT_DIR/checker_os/$checker_name"
+chmod +x "$checker_path"
 
 if [ ! -f "$checker_path" ]; then
     echo -e "\e[31m✘ Error: Checker not found at path: '$checker_path'\e[0m"

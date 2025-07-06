@@ -74,7 +74,7 @@ Arguments:\n\
 fi
 
 if [ "$#" -ne 3 ]; then
-    echo -e "\e[33mℹ Missing arguments. Enter values manually:\e[0m"
+    echo -e "\e[33mℹ Swapinette:\e[0m"
 
     read -p "Number of tests to run: " total
     while ! [[ "$total" =~ ^[0-9]+$ ]]; do
@@ -122,8 +122,9 @@ print_progress_bar() {
 }
 
 clear
+echo -e "\e[33mℹ Swapinette:\e[0m"
 ## TEST 1
-echo -e "\n➤ Test 1: Validating output with $checker_name..."
+echo -e "➤ Test 1: Validating output with $checker_name..."
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 1-$(($size)) -n $size | tr '\n' ' ')"

@@ -51,10 +51,10 @@ case "$os_type" in
 esac
 
 checker_path="./checker_os/$checker_name"
+chmod +x $checker_path
 
 if [ ! -x "$checker_path" ]; then
     echo -e "\e[31m✘ Error: Checker '$checker_name' not found in ./checker_os or is not executable.\e[0m"
-    echo -e "  Make sure it exists and is marked as executable (chmod +x checker_os/$checker_name)."
     exit 1
 fi
 

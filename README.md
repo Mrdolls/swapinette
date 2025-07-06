@@ -26,13 +26,14 @@ The corresponding checker (`checker_linux` or `checker_Mac`) must also be availa
 
 ## 📦 Usage
 ```bash
-swapinette <nb_tests> <list_size> <max_operations>
+swapinette [-f] <nb_tests> <list_size> <max_operations>
 ```
-| Argument           | Description                                           |
-| ------------------ | ----------------------------------------------------- |
-| `<nb_tests>`       | Number of random test cases to run                    |
-| `<list_size>`      | Number of elements to sort in each test (e.g., `100`) |
-| `<max_operations>` | Max allowed operations per test (e.g., `700`)         |
+| Argument           | Description                                                    |
+| ------------------ | ---------------------------------------------------------------|
+| `-f` (optional)    | Shows the input for tests that fail the operation count limit. |
+| `<nb_tests>`       | Number of random test cases to run                             |
+| `<list_size>`      | Number of elements to sort in each test (e.g., `100`)          |
+| `<max_operations>` | Max allowed operations per test (e.g., `700`)                  |
 
 ---
 

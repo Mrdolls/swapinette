@@ -55,7 +55,9 @@ Maximum allowed operations    : 550
 
 ## 💡 Smart Detection
 
-You can launch the script from any subfolder of your project. It will automatically search upward to locate push_swap and the correct checker binary.
+✅ No need to download any checker!
+The required binaries (checker_linux / checker_Mac) are bundled inside the script's checker_os/ folder and selected automatically based on your OS.
+You can launch the script from any subfolder of your project — it will automatically locate push_swap and use the correct built-in checker.
 
 ---
 

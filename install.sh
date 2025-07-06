@@ -61,15 +61,29 @@ main() {
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
     sleep 3
     clear
-    echo -e "${C_GREEN}
+    text="
 ███████╗██╗    ██╗ █████╗ ██████╗ ██╗███╗   ██╗███████╗████████╗████████╗███████╗
 ██╔════╝██║    ██║██╔══██╗██╔══██╗██║████╗  ██║██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝
 ███████╗██║ █╗ ██║███████║██████╔╝██║██╔██╗ ██║█████╗     ██║      ██║   █████╗  
 ╚════██║██║███╗██║██╔══██║██╔═══╝ ██║██║╚██╗██║██╔══╝     ██║      ██║   ██╔══╝  
 ███████║╚███╔███╔╝██║  ██║██║     ██║██║ ╚████║███████╗   ██║      ██║   ███████╗
 ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝      ╚═╝   ╚══════╝
-                                                                                 
-${C_RESET}"
+"
+
+# On sépare les lignes
+IFS=$'\n' read -rd '' -a lines <<<"$text"
+
+num_lines=${#lines[@]}
+
+for ((i=0; i<num_lines; i++)); do
+    # Calcul progressif du rouge et vert (de vert pur à rouge pur)
+    r=$((255 * i / (num_lines - 1)))
+    g=$((255 - r))
+    b=0
+
+    # Code ANSI 24-bit foreground color
+    printf "\e[38;2;%d;%d;%dm%s\e[0m\n" "$r" "$g" "$b" "${lines[i]}"
+done
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"

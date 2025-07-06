@@ -26,27 +26,29 @@ The corresponding checker (`checker_linux` or `checker_Mac`) must also be availa
 
 ## 📦 Usage
 ```bash
-swapinette [-help] [-f] <nb_tests> <list_size> <max_operations>
+swapinette [-help] [-f] [<nb_tests> <list_size> <max_operations>]
 ```
-| Argument           | Description                                                    |
-| ------------------ | ---------------------------------------------------------------|
-| `-help` (optional) | Displays the help page.                                        |
-| `-f` (optional)    | Shows the input for tests that fail the operation count limit. |
-| `<nb_tests>`       | Number of random test cases to run                             |
-| `<list_size>`      | Number of elements to sort in each test (e.g., `100`)          |
-| `<max_operations>` | Max allowed operations per test (e.g., `700`)                  |
+| Argument (optional) | Description                                                    |
+| ------------------  | ---------------------------------------------------------------|
+| `-help`             | Displays the help page.                                        |
+| `-f`                | Shows the input for tests that fail the operation count limit. |
+| `<nb_tests>`        | Number of random test cases to run                             |
+| `<list_size>`       | Number of elements to sort in each test (e.g., `100`)          |
+| `<max_operations>`  | Max allowed operations per test (e.g., `700`)                  |
 
 ---
 
 ## 🧾 Example
 ```bash
-swapinette 100 50 550
+swapinette -f
 ```
-• Runs 100 tests
+### You will then be prompted:
 
-• Each test uses a list of 50 integers
+Number of tests to run        : 100
 
-• Fails if more than 550 operations are used
+Size of each list to sort     : 50
+
+Maximum allowed operations    : 550
 
 ---
 

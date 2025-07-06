@@ -50,8 +50,7 @@ case "$os_type" in
         ;;
 esac
 
-checker_path="./checker_os/$checker_name"
-chmod +x $checker_path
+checker_path="checker_os/$checker_name"
 
 if [ ! -x "$checker_path" ]; then
     echo -e "\e[31m✘ Error: Checker '$checker_name' not found in ./checker_os or is not executable.\e[0m"

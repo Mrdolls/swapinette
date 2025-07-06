@@ -2,11 +2,17 @@
 
 clear
 show_help=false
+show_failures=false
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
 
 if [[ "$1" == "-help" ]]; then
     show_help=true
+    shift
+fi
+
+if [[ "$1" == "-f" ]]; then
+    show_failures=true
     shift
 fi
 
@@ -110,6 +116,7 @@ for ((i=1; i<=total; i++)); do
         sleep 0.5
         printf "\r\033[K"
         echo -e "\n\e[31m✘ KO with $checker_name ➜ Result: $RESULT\e[0m"
+        echo -e "\e[31m✘ $ARG\e[0m"
         exit 1
     fi
 
@@ -137,6 +144,10 @@ for ((i=1; i<=total; i++)); do
     if [ "$INDEX" -le "$max_moves" ]; then
         ((success++))
     else
+        if [ "$show_failures" = true ]; then
+        printf "\r\033[K"
+        echo -e "\e[31m✘ Failed with $INDEX operations for: $ARG\n\e[0m"
+        fi
         has_failed=true
     fi
 

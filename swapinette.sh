@@ -127,7 +127,7 @@ echo -e "➤ Test 1: Validating output with $checker_name..."
 
 for ((i=1; i<=total; i++)); do
     ARG="$(shuf -i 1-$(($size)) -n $size | tr '\n' ' ')"
-    RESULT=$("$exec_name" $ARG | "$checker" $ARG)
+    RESULT=$("$exec_name" $ARG | "$checker_path" $ARG)
 
     if [ "$RESULT" != "OK" ]; then
         sleep 0.5

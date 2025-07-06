@@ -3,6 +3,7 @@
 clear
 show_help=false
 show_failures=false
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 (( TERM_WIDTH > 80 )) && TERM_WIDTH=80
 
@@ -50,7 +51,7 @@ case "$os_type" in
         ;;
 esac
 
-checker_path="./checker_os/$checker_name"
+checker_path="$SCRIPT_DIR/checker_os/$checker_name"
 
 if [ ! -x "$checker_path" ]; then
     echo -e "\e[31m✘ Error: Checker '$checker_name' not found in ./checker_os or is not executable.\e[0m"

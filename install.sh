@@ -61,7 +61,37 @@ main() {
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
     sleep 3
     clear
-    text="
+    ## TEST ASCII
+    hsla_to_rgb() {
+    local h=$1
+    local s=$2
+    local l=$3
+
+    local c=$(echo "scale=4; (1 - c($h*3.14159/180)*c($h*3.14159/180))" | bc -l)
+    # Utilisation simplifiée ici car on va faire un mix approximatif
+    # Pour un vrai convertisseur, il faut plus de calcul, ici on va juste coder approx.
+
+    # Pour simplifier on utilise une fonction approximative pré-calculée en bash
+
+    # Ici on remplace par valeurs directes des 3 couleurs données :
+
+    if (( $(echo "$h >= 0 && $h < 60" | bc -l) )); then
+        r=255; g=128; b=0  # orange approximatif
+    elif (( $(echo "$h >= 60 && $h < 90" | bc -l) )); then
+        r=255; g=165; b=0
+    else
+        r=0; g=255; b=0
+    fi
+
+    echo "$r $g $b"
+}
+
+# On va juste utiliser les couleurs fixes (simplifié)
+green_r=0; green_g=255; green_b=0
+orange_r=255; orange_g=165; orange_b=0
+red_r=255; red_g=0; red_b=0
+
+text="
 ███████╗██╗    ██╗ █████╗ ██████╗ ██╗███╗   ██╗███████╗████████╗████████╗███████╗
 ██╔════╝██║    ██║██╔══██╗██╔══██╗██║████╗  ██║██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝
 ███████╗██║ █╗ ██║███████║██████╔╝██║██╔██╗ ██║█████╗     ██║      ██║   █████╗  
@@ -70,22 +100,32 @@ main() {
 ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝      ╚═╝   ╚══════╝
 "
 
-# On sépare les lignes
 text=$(echo "$text" | sed '/^\s*$/d')
 
 while IFS= read -r line; do
     len=${#line}
     for ((i=0; i<len; i++)); do
-        # Rouge augmente de 0 à 255 de gauche à droite
-        r=$((255 * i / (len - 1)))
-        # Vert diminue de 255 à 0 de gauche à droite
-        g=$((255 - r))
-        b=0
+        pos=$(( i * 100 / (len - 1) ))
+        if (( pos <= 50 )); then
+            # dégradé vert -> orange
+            ratio=$(( pos * 2 ))  # 0 à 100
+            r=$(( green_r + (orange_r - green_r) * ratio / 100 ))
+            g=$(( green_g + (orange_g - green_g) * ratio / 100 ))
+            b=$(( green_b + (orange_b - green_b) * ratio / 100 ))
+        else
+            # dégradé orange -> rouge
+            ratio=$(( (pos - 50) * 2 )) # 0 à 100
+            r=$(( orange_r + (red_r - orange_r) * ratio / 100 ))
+            g=$(( orange_g + (red_g - orange_g) * ratio / 100 ))
+            b=$(( orange_b + (red_b - orange_b) * ratio / 100 ))
+        fi
+
         char="${line:i:1}"
         printf "\e[38;2;%d;%d;%dm%s\e[0m" "$r" "$g" "$b" "$char"
     done
     echo
 done <<< "$text"
+##TEXT ASCII
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"

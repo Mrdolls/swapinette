@@ -60,7 +60,7 @@ fi
 
 if [ "$show_help" = true ]; then
     printf "\
-Usage: %s <nb_tests> <list_size> <max_operations>\n\
+Usage: %s [-f] <nb_tests> <list_size> <max_operations>\n\
 \n\
 Description:\n\
 This script tests 'push_swap'. It auto-detects executables,\n\
@@ -74,13 +74,29 @@ Arguments:\n\
 fi
 
 if [ "$#" -ne 3 ]; then
-    printf "\e[31m✘ Error:\e[0m Invalid arguments. Expected 3, got $#.\nUse \e[34m-help\e[0m for more information.\n"
-    exit 1
+    echo -e "\e[33mℹ Missing arguments. Enter values manually:\e[0m"
+
+    read -p "Number of tests to run: " total
+    while ! [[ "$total" =~ ^[0-9]+$ ]]; do
+        read -p "✘ Please enter a valid number: " total
+    done
+
+    read -p "List size: " size
+    while ! [[ "$size" =~ ^[0-9]+$ ]]; do
+        read -p "✘ Please enter a valid number: " size
+    done
+
+    read -p "Maximum allowed operations: " max_moves
+    while ! [[ "$max_moves" =~ ^[0-9]+$ ]]; do
+        read -p "✘ Please enter a valid number: " max_moves
+    done
+else
+    total=$1
+    size=$2
+    max_moves=$3
 fi
 
-total=$1
-size=$2
-max_moves=$3
+# La suite de ton script peut continuer ici avec $total, $size et $max_moves bien définis.
 
 print_progress_bar() {
     local current=$1
@@ -105,6 +121,7 @@ print_progress_bar() {
     fi
 }
 
+clear
 ## TEST 1
 echo -e "\n➤ Test 1: Validating output with $checker_name..."
 

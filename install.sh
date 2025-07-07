@@ -128,7 +128,7 @@ done <<< "$text"
 ##TEXT ASCII
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     checker_path="$SCRIPT_DIR/checker_os/$checker_name"
-    chmod =+ "$checker_path"
+    chmod +x "$checker_path" && chmod +w "$checker_path" && chmod +r "$checker_path"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"

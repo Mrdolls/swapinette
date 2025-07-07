@@ -20,8 +20,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Mrdolls/swapinette/refs/
 ---
 
 ## ✅ Requirements  
-Your `push_swap` binary must be compiled and located in the current or any parent directory.  
-The corresponding checker (`checker_linux` or `checker_Mac`) must also be available and executable.
+Your `push_swap` binary must be compiled and located in the current or any parent directory.
 
 ---
 

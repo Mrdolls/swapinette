@@ -62,8 +62,8 @@ You can launch the script from any subfolder of your project — it will automat
 
 ## 🛠 OS Compatibility
 
-✅ macOS (uses checker_Mac)
+✅ macOS
 
-✅ Linux (uses checker_linux)
+✅ Linux
 
 ❌ Not compatible with Windows

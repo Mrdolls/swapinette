@@ -126,16 +126,6 @@ while IFS= read -r line; do
     echo
 done <<< "$text"
 ##TEXT ASCII
-    checker_name=""
-    uname_out="$(uname -s)"
-    case "${uname_out}" in
-        Linux*)     checker_name="checker_linux.sh";;
-        Darwin*)    checker_name="checker_mac.sh";;
-        *)          echo -e "${C_RED}Unsupported OS${C_RESET}"; exit 1;;
-    esac
-    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    checker_path="$SCRIPT_DIR/checker_os/$checker_name"
-    chmod +x "$checker_path" && chmod +w "$checker_path" && chmod +r "$checker_path"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"

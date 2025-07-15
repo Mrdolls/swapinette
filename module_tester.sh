@@ -8,6 +8,7 @@ RED="\033[0;31m"
 YELLOW="\033[0;33m"
 NC="\033[0m"
 MAX_DESC_LENGTH=50
+failed_tests=0;
 
 print_result() {
     status=$1
@@ -18,6 +19,7 @@ print_result() {
     if [ "$status" = "OK" ]; then
         echo -e "${GREEN}OK${NC}"
     else
+        failed_tests=$((failed_tests + 1))
         echo -e "${RED}KO${NC}"
     fi
 }
@@ -171,7 +173,9 @@ calculate_score() {
     global_score=0
 
     if [ "$score_100" -ge 1 ] && [ "$score_500" -ge 1 ]; then
-        global_score=$((80 + (score_100 + score_500) * 2))
+        base_score=$((80 - failed_tests * 5))
+        if [ "$base_score" -lt 0 ]; then base_score=0; fi
+        global_score=$((base_score + (score_100 + score_500) * 2))
     else
         global_score=0
     fi
@@ -182,9 +186,10 @@ calculate_score() {
     if [ "$global_score" -eq 0 ]; then
         echo -e "${RED}Tests failed or performance too low. Score: 0/100${NC}"
     else
-        echo -e "${GREEN}All tests passed.${NC}"
+        echo -e "${GREEN}All critical tests passed.${NC}"
         echo -e "100 elements performance: ${score_100}/5"
         echo -e "500 elements performance: ${score_500}/5"
+        echo -e "KO count : $failed_tests"
         echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
     fi
 }

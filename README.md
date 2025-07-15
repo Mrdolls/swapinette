@@ -10,7 +10,7 @@
 **Swapinette** is an interactive script to test your [`push_swap`](https://github.com/) project from 42 School.  
 It provides two modes:
 - **Evaluation Mode** – Automated tests with scoring based on 42's guidelines.
-- **Manual Mode** – Custom input testing in an interactive loop.
+- **Custom Performance Test** – Custom input testing in an interactive loop.
 
 ---
 

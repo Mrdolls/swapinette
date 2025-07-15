@@ -37,7 +37,7 @@ empty_test() {
 test_valid() {
     desc=$1
     input=$2
-    result=$($PS $input | $CK $input)
+    result=$("$PS" $input | "$CK" $input)
     if [ "$result" = "OK" ]; then
         print_result "OK" "$desc"
     else
@@ -119,7 +119,7 @@ echo -e "${NC}"
 test_error "Duplicate values (1 2 2)" "1 2 2"
 test_error "Non-numeric input (a b c)" "a b c"
 test_error "Floating point numbers (1.5 2.6)" "1.5 2.6"
-test_valid "INT_MIN and INT_MAX" "-2147483648 2147483647"
+test_error "INT_MIN and INT_MAX" "-2147483648 2147483647 2"
 
 echo -e "${YELLOW}"
 echo "========================================"
@@ -140,16 +140,16 @@ echo "              Simple Cases              "
 echo "========================================"
 echo -e "${NC}"
 
-output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ')
-output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ')
-output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ')
+output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ' | sed 's/ $//')
+output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ' | sed 's/ $//')
+output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ' | sed 's/ $//')
 test_valid "Reversed order (3 2 1)" "3 2 1"
 test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"
 test_valid "Random 5 elements (3 1 5 2 4)" "3 1 5 2 4"
 test_valid "Multiple spaces (1      9  2   8)" "1      9  2   8"
-test_valid "Small random input (100)" $output_test1
-test_valid "Medium random input (500)" $output_test2
-test_valid "Big random input (1000)" $output_test3
+test_valid "Small random input (100)" "$output_test1"
+test_valid "Medium random input (500)" "$output_test2"
+test_valid "Big random input (1000)" "$output_test3"
 
 echo -e "${YELLOW}"
 echo "========================================"

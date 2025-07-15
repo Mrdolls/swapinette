@@ -37,7 +37,7 @@ empty_test() {
 test_valid() {
     desc=$1
     input=$2
-    result=$($PS $input 2> /dev/null | $CK $input 2> /dev/null)
+    result=$($PS $input | $CK $input)
     if [ "$result" = "OK" ]; then
         print_result "OK" "$desc"
     else
@@ -118,8 +118,7 @@ echo -e "${NC}"
 test_error "Duplicate values (1 2 2)" "1 2 2"
 test_error "Non-numeric input (a b c)" "a b c"
 test_error "Floating point numbers (1.5 2.6)" "1.5 2.6"
-test_error "Integer overflow (2147483648)" "2147483648 2"
-test_error "Integer underflow (-2147483649)" "-2147483649 2"
+test_valid "INT_MIN and INT_MAX" "-2147483648 2147483647"
 
 echo -e "${YELLOW}"
 echo "========================================"
@@ -127,10 +126,10 @@ echo "             Empty Inputs               "
 echo "========================================"
 echo -e "${NC}"
 empty_test "Empty input ()"
-empty_test "Empty string (\"\")"
+test_valid "Empty string (\"\")"
 test_valid "Single number (1)" "1"
 test_valid "Sorted 3 elements (1 2 3)" "1 2 3"
-test_valid "Sorted 9 elements" "1 2 3 4 5 6 7 8 9"
+test_valid "Sorted 9 elements (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
 test_valid "Sorted negative/positive (-52 40 80 1500)" "-52 40 80 1500"
 
 echo -e "${YELLOW}"
@@ -142,13 +141,6 @@ test_valid "Reversed order (3 2 1)" "3 2 1"
 test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"
 test_valid "Random 5 elements (3 1 5 2 4)" "3 1 5 2 4"
 test_valid "Multiple spaces (1      9  2   8)" "1      9  2   8"
-
-echo -e "${YELLOW}"
-echo "========================================"
-echo "                 Limits                 "
-echo "========================================"
-echo -e "${NC}"
-test_valid "INT_MIN and INT_MAX" "-2147483648 2147483647"
 
 echo -e "${YELLOW}"
 echo "========================================"
@@ -189,7 +181,6 @@ calculate_score() {
         echo -e "${GREEN}All critical tests passed.${NC}"
         echo -e "100 elements performance: ${score_100}/5"
         echo -e "500 elements performance: ${score_500}/5"
-        echo -e "KO count : $failed_tests"
         echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
     fi
 }

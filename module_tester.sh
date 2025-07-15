@@ -183,7 +183,7 @@ calculate_score() {
         echo -e "${RED}Tests failed or performance too low. Score: 0/100${NC}"
     else
         echo -e "${GREEN}All tests passed.${NC}"
-        echo -e "3–5 elements performance: ${score_100}/5"
+        echo -e "100 elements performance: ${score_100}/5"
         echo -e "500 elements performance: ${score_500}/5"
         echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
     fi

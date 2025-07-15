@@ -109,6 +109,7 @@ test_ops_count() {
     if [ "$fail" -eq 0 ]; then
         echo -e "${GREEN}OK${NC}"
     else
+        failed_tests=$((failed_tests + 1))
         echo -e "${RED}KO${NC} (Too many operations in at least one test)"
     fi
 }

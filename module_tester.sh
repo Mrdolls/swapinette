@@ -115,6 +115,7 @@ echo "========================================"
 echo "             Error Tests                "
 echo "========================================"
 echo -e "${NC}"
+
 test_error "Duplicate values (1 2 2)" "1 2 2"
 test_error "Non-numeric input (a b c)" "a b c"
 test_error "Floating point numbers (1.5 2.6)" "1.5 2.6"
@@ -125,6 +126,7 @@ echo "========================================"
 echo "             Empty Inputs               "
 echo "========================================"
 echo -e "${NC}"
+
 empty_test "Empty input ()"
 empty_test "Empty string (\"\")"
 empty_test "Single number (1)" "1"
@@ -137,16 +139,24 @@ echo "========================================"
 echo "              Simple Cases              "
 echo "========================================"
 echo -e "${NC}"
+
+output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ')
+output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ')
+output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ')
 test_valid "Reversed order (3 2 1)" "3 2 1"
 test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"
 test_valid "Random 5 elements (3 1 5 2 4)" "3 1 5 2 4"
 test_valid "Multiple spaces (1      9  2   8)" "1      9  2   8"
+test_valid "Small random input (100)" $output_test1
+test_valid "Medium random input (500)" $output_test2
+test_valid "Big random input (1000)" $output_test3
 
 echo -e "${YELLOW}"
 echo "========================================"
 echo "            Performance Tests           "
 echo "========================================"
 echo -e "${NC}"
+
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
 test_ops_count "3 elements random (< 3) — 1000 tests" "$ARG" 3 1000
 

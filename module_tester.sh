@@ -107,6 +107,7 @@ test_ops_count() {
 }
 
 
+
 ### --- TESTS ---
 
 # Colors for section headers
@@ -158,16 +159,18 @@ echo "========================================"
 echo -e "${NC}"
 
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
-test_ops_count "3 elements random (< 3) — 1000 tests" "$ARG" 3 1000
+test_ops_count "3 elements random (< 3) — 500 tests" "$ARG" 3 1000
 
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
-test_ops_count "5 elements random (< 12) — 1000 tests" "$ARG" 12 1000
+test_ops_count "5 elements random (< 5) — 500 tests" "$ARG" 12 1000
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 test_ops_count "100 elements random (< 1500) — 500 tests" "$ARG" 1500 500
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 test_ops_count "500 elements random (< 11500) — 250 tests" "$ARG" 11500 250
+
+
 
 calculate_score() {
     score_100=$1

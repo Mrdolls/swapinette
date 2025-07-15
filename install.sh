@@ -55,9 +55,6 @@ main() {
         echo -e "\n# Alias for Swapinette" >> "$SHELL_CONFIG"
         echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
     fi
-    chmod +x "$INSTALL_DIR/module_tests.sh"
-    chmod +x "$INSTALL_DIR/module_brut.sh"
-    chmod +x "$INSTALL_DIR/lauch_tests.sh"
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
     sleep 3
     clear

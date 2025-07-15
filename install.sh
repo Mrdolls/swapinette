@@ -49,13 +49,15 @@ main() {
     esac
     echo -e "Detected shell config file: ${C_BLUE}$SHELL_CONFIG${C_RESET}"
 
-    ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/swapinette.sh'"
+    ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/launch_tests.sh'"
     if ! grep -qF "$ALIAS_COMMAND" "$SHELL_CONFIG"; then
         echo "Adding alias to shell config file..."
         echo -e "\n# Alias for Swapinette" >> "$SHELL_CONFIG"
         echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
     fi
-    chmod +x "$INSTALL_DIR/swapinette.sh"
+    chmod +x "$INSTALL_DIR/module_tests.sh"
+    chmod +x "$INSTALL_DIR/module_brut.sh"
+    chmod +x "$INSTALL_DIR/lauch_tests.sh"
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
     sleep 3
     clear

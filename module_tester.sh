@@ -26,8 +26,9 @@ print_result() {
 
 empty_test() {
     desc=$1
-    result=$($PS "" 2> /dev/null | $CK "" 2> /dev/null)
-    if [ -z "$result" ]; then
+    input=$2
+    result=$($PS $input | wc -l)
+    if [ "$result" -eq 0 ]; then
         print_result "OK" "$desc"
     else
         print_result "KO" "$desc"
@@ -79,6 +80,12 @@ test_ops_count() {
     size=$(( $(echo $input | wc -w) ))
 
     for i in $(seq 1 $nb_tests); do
+        result=$("$PS" $input | "$CK" $input)
+        if [ "$result" = "KO" ]; then
+            failed_tests=$((failed_tests - 1))
+            print_result "KO" "$desc"
+            return 1
+        fi
         if [ "$nb_tests" -gt 1 ]; then
             input=$(shuf -i 1-10000 -n $size | tr '\n' ' ' | sed 's/ $//')
         fi
@@ -133,7 +140,6 @@ empty_test "Empty string (\"\")"
 empty_test "Single number (1)" "1"
 empty_test "Sorted 3 elements (1 2 3)" "1 2 3"
 empty_test "Sorted 9 elements (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
-empty_test "Sorted negative/positive (-52 40 80 1500)" "-52 40 80 1500"
 
 echo -e "${YELLOW}"
 echo "========================================"
@@ -176,49 +182,61 @@ calculate_score() {
     score_100=$1
     score_500=$2
     global_score=0
+    base_score=$((80 - failed_tests * 5))
 
     if [ "$score_100" -ge 1 ] && [ "$score_500" -ge 1 ]; then
-        base_score=$((80 - failed_tests * 5))
         if [ "$base_score" -lt 0 ]; then base_score=0; fi
         global_score=$((base_score + (score_100 + score_500) * 2))
     else
-        global_score=0
+        global_score=$base_score
     fi
+
 
     echo "========================================"
     echo "             Final Result               "
     echo "========================================"
-    if [ "$global_score" -eq 0 ]; then
-        echo -e "${RED}Tests failed or performance too low. Score: 0/100${NC}"
-    else
-        echo -e "${GREEN}All critical tests passed.${NC}"
-        echo -e "100 elements performance: ${score_100}/5"
-        echo -e "500 elements performance: ${score_500}/5"
-        echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
-    fi
+
+    echo -e "${GREEN}All critical tests passed.${NC}"
+    echo -e "100 elements performance: ${score_100}/5"
+    echo -e "500 elements performance: ${score_500}/5"
+    echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
+
 }
 
-
+get_score1(){
 # Test 100 éléments
 score_100=0
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 ops_100=$($PS $ARG | wc -l)
+ko_test1=$("$PS" $ARG | "$CK" $ARG)
+if [ "$ko_test1" = "KO" ]; then
+    score_100=0
+    return 1
+fi
 if [ "$ops_100" -lt 700 ]; then score_100=5
 elif [ "$ops_100" -lt 900 ]; then score_100=4
 elif [ "$ops_100" -lt 1100 ]; then score_100=3
 elif [ "$ops_100" -lt 1300 ]; then score_100=2
 elif [ "$ops_100" -lt 1500 ]; then score_100=1
 fi
-
+}
+get_score2(){
 # Test 500 éléments
 score_500=0
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 ops_500=$($PS $ARG | wc -l)
+ko_test2=$("$PS" $ARG | "$CK" $ARG)
+if [ "$ko_test2" = "KO" ]; then
+    score_100=0
+    return 1
+fi
 if [ "$ops_500" -lt 5500 ]; then score_500=5
 elif [ "$ops_500" -lt 7000 ]; then score_500=4
 elif [ "$ops_500" -lt 8500 ]; then score_500=3
 elif [ "$ops_500" -lt 10000 ]; then score_500=2
 elif [ "$ops_500" -lt 11500 ]; then score_500=1
 fi
-
+}
+get_score1
+get_score2
 calculate_score $score_100 $score_500

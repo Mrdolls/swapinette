@@ -109,7 +109,7 @@ test_ops_count() {
     if [ "$fail" -eq 0 ]; then
         echo -e "${GREEN}OK${NC}"
     else
-        echo -e "${RED}KO${NC} (Trop d'opérations sur au moins un test)"
+        echo -e "${RED}KO${NC} (Too many operations in at least one test)"
     fi
 }
 
@@ -165,16 +165,16 @@ echo "========================================"
 echo -e "${NC}"
 
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
-test_ops_count "3 elements random (< 3) — 500 tests" "$ARG" 3 1000
+test_ops_count "3 random elements (< 3 ops) — 500 tests" "$ARG" 3 1000
 
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
-test_ops_count "5 elements random (< 5) — 500 tests" "$ARG" 12 1000
+test_ops_count "5 random elements (< 5 ops) — 500 tests" "$ARG" 12 1000
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
-test_ops_count "100 elements random (< 1500) — 500 tests" "$ARG" 1500 500
+test_ops_count "100 random elements (< 1500 ops) — 500 tests" "$ARG" 1500 500
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
-test_ops_count "500 elements random (< 11500) — 250 tests" "$ARG" 11500 250
+test_ops_count "500 random elements (< 11500 ops) — 250 tests" "$ARG" 11500 250
 
 
 

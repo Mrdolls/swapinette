@@ -60,7 +60,7 @@ display_menu() {
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. Evaluation Mode (predefined tests and scoring)"
-    echo "  2. Manual Mode (custom tests in loop)"
+    echo "  2. Custom Performance Test (custom tests in loop)"
     echo "  3. Exit"
     echo ""
 }
@@ -73,7 +73,7 @@ run_evaluation_mode() {
 }
 
 run_manual_mode() {
-    echo -e "\n${GREEN}Starting Manual Mode...${NC}"
+    echo -e "\n${GREEN}Starting Custom Performance Test...${NC}"
     sleep 1
     clear
     bash "$MODULE_BRUT_PATH"

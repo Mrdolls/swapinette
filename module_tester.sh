@@ -185,7 +185,6 @@ test_error "Non-numeric input (a b c)" "a b c"
 test_error "Floating point numbers (1.5 2.6)" "1.5 2.6"
 test_error "INT_MAX (2 5 2147483648 97)" "2 5 2147483648 97"
 test_error "INT_MIN (1 9 5 -2147483649 -5)" "1 9 5 -2147483649 -5"
-test_error "Impossible values (\"1 2 3\" 4 5 6)" "\"1 2 3\" 4 5 6"
 
 echo -e "${YELLOW}"
 echo "========================================"

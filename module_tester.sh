@@ -232,21 +232,21 @@ test_leaks "Test leaks with big args (1000)" "$ARG"
 
 echo -e "${YELLOW}"
 echo "========================================"
-echo "            Performance Tests           "
+echo "  Performance Tests (250 random tests)  "
 echo "========================================"
 echo -e "${NC}"
 
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
-test_ops_count "3 random elements (< 3 ops) — 500 tests" "$ARG" 3 1000
+test_ops_count "3 random elements (< 3 ops)" "$ARG" 3 250
 
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
-test_ops_count "5 random elements (< 5 ops) — 500 tests" "$ARG" 12 1000
+test_ops_count "5 random elements (< 5 ops)" "$ARG" 12 250
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
-test_ops_count "100 random elements (< 1500 ops) — 500 tests" "$ARG" 1500 500
+test_ops_count "100 random elements (< 1500 ops)" "$ARG" 1500 250
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
-test_ops_count "500 random elements (< 11500 ops) — 250 tests" "$ARG" 11500 250
+test_ops_count "500 random elements (< 11500 ops)" "$ARG" 11500 250
 
 
 

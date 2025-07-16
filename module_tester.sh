@@ -251,7 +251,7 @@ ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
 test_ops_count "3 random elements (< 3 ops)" "$ARG" 3 250
 
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
-test_ops_count "5 random elements (< 5 ops)" "$ARG" 12 250
+test_ops_count "5 random elements (< 12 ops)" "$ARG" 12 250
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 test_ops_count "100 random elements (< 1500 ops)" "$ARG" 1500 250

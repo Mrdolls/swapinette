@@ -150,16 +150,17 @@ test_leaks() {
     fi
 }
 
-test_norminette(){
+test_norminette() {
     desc=$1
 
-    norminette_ouput=${norminette | grep "Error:" | wc -l}
+    norm_output=$(norminette 2>&1)
+    error_count=$(echo "$norm_output" | grep -c "Error:")
 
-    if [ "$norminette_ouput" -eq 0]; then
+    if [ "$error_count" -eq 0 ]; then
         print_result "OK" "$desc"
-        else
-            printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[$norminette_ouput Errors]"
-        fi
+    else
+        printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[$error_count Errors]"
+    fi
 }
 
 ### --- TESTS ---
@@ -171,7 +172,7 @@ echo "             NORMINETTE                "
 echo "========================================"
 echo -e "${NC}"
 
-test_norminette
+test_norminette "Normiette tests"
 
 echo -e "${YELLOW}"
 echo "========================================"

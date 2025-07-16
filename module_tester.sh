@@ -114,7 +114,41 @@ test_ops_count() {
     fi
 }
 
+test_leaks() {
+    desc=$1
+    args=$2
 
+    if ! command -v valgrind &> /dev/null; then
+        print_result "KO" "$desc"
+        echo "[Valgrind not installed]"
+        return
+    fi
+
+    valgrind_output=$(LANG=C valgrind --leak-check=full $PS $args 2>&1)
+    lost_line=$(echo "$valgrind_output" | grep "definitely lost:" | head -1)
+
+    if [ -n "$lost_line" ]; then
+        lost_bytes=$(echo "$lost_line" | awk '{print $4}')
+        if ! [[ "$lost_bytes" =~ ^[0-9]+$ ]]; then
+            print_result "KO" "$desc"
+            echo "[Valgrind parsing error: lost_bytes='$lost_bytes']"
+            return
+        fi
+        if [ "$lost_bytes" -eq 0 ]; then
+            print_result "OK" "$desc"
+        else
+            printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[definitely lost = $lost_bytes bytes]"
+        fi
+    else
+        freed_line=$(echo "$valgrind_output" | grep "All heap blocks were freed -- no leaks are possible")
+        if [ -n "$freed_line" ]; then
+            print_result "OK" "$desc"
+        else
+            print_result "KO" "$desc"
+            echo "[Valgrind output missing definitely lost info and no confirmation of no leaks]"
+        fi
+    fi
+}
 
 ### --- TESTS ---
 
@@ -162,6 +196,21 @@ test_valid "Big random input (1000)" "$output_test3"
 
 echo -e "${YELLOW}"
 echo "========================================"
+echo "            Leaks Tests           "
+echo "========================================"
+echo -e "${NC}"
+
+ARG=$(seq 1 10 | sort -R | tr '\n' ' ')
+test_leaks "Test leaks with small args (10)" "$ARG"
+
+ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
+test_leaks "Test leaks with medium args (100)" "$ARG"
+
+ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
+test_leaks "Test leaks with big args (1000)" "$ARG"
+
+echo -e "${YELLOW}"
+echo "========================================"
 echo "            Performance Tests           "
 echo "========================================"
 echo -e "${NC}"
@@ -177,6 +226,8 @@ test_ops_count "100 random elements (< 1500 ops) — 500 tests" "$ARG" 1500 500
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 test_ops_count "500 random elements (< 11500 ops) — 250 tests" "$ARG" 11500 250
+
+
 
 
 

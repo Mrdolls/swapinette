@@ -207,6 +207,7 @@ echo -e "${NC}"
 output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ' | sed 's/ $//')
 output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ' | sed 's/ $//')
 output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ' | sed 's/ $//')
+test_valid "zero test (3 0 1 5)" "3 0 1 5"
 test_valid "Reversed order (3 2 1)" "3 2 1"
 test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"
 test_valid "Random 5 elements (3 1 5 2 4)" "3 1 5 2 4"
@@ -220,6 +221,16 @@ echo "========================================"
 echo "            Leaks Tests           "
 echo "========================================"
 echo -e "${NC}"
+
+test_leaks "Test leaks with an empty list" ""
+test_leaks "Test leaks with a zero in a list (1 3 0 4)" "1 3 0 4"
+test_leaks "Test leaks with a basic list (2 1 4 3 5)" "2 1 4 3 5"
+test_leaks "Test leaks with a negative list (-2 -1 -4 -3 -5)" "-2 -1 -4 -3 -5"
+test_leaks "Test leaks with a sorted list (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
+test_leaks "Test leaks with an error 1 (1 2 3 3) " "1 2 3 3"
+test_leaks "Test leaks with an error 1 (1 4 4.5 3.9) " "1 4 4.5 3.9"
+test_leaks "Test leaks with an error 2 (3 6 4a b c) " "3 6 4a b c"
+test_leaks "Test leaks with an error 3 (1 2 9 -2147483649 5) " "1 2 9 -2147483649 5"
 
 ARG=$(seq 1 10 | sort -R | tr '\n' ' ')
 test_leaks "Test leaks with small args (10)" "$ARG"
@@ -265,10 +276,11 @@ calculate_score() {
         global_score=$base_score
     fi
 
-
+    echo -e "${YELLOW}"
     echo "========================================"
     echo "             Final Result               "
     echo "========================================"
+    echo -e "${NC}"
 
     echo -e "${GREEN}All critical tests passed.${NC}"
     echo -e "100 elements performance: ${score_100}/5"

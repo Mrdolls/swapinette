@@ -150,9 +150,29 @@ test_leaks() {
     fi
 }
 
+test_norminette(){
+    desc=$1
+
+    norminette_ouput=${norminette | grep "Error:" | wc -l}
+
+    if [ "$norminette_ouput" -eq 0]; then
+        print_result "OK" "$desc"
+        else
+            printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[$norminette_ouput Errors]"
+        fi
+}
+
 ### --- TESTS ---
 
 # Colors for section headers
+echo -e "${YELLOW}"
+echo "========================================"
+echo "             NORMINETTE                "
+echo "========================================"
+echo -e "${NC}"
+
+test_norminette
+
 echo -e "${YELLOW}"
 echo "========================================"
 echo "             Error Tests                "

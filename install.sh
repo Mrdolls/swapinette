@@ -56,7 +56,6 @@ main() {
         echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
     fi
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
-    sleep 3
     clear
     ## TEST ASCII
     hsla_to_rgb() {

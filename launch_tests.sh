@@ -66,15 +66,11 @@ display_menu() {
 }
 
 run_evaluation_mode() {
-    echo -e "\n${GREEN}Starting Evaluation Mode...${NC}"
-    sleep 1
     clear
     bash "$MODULE_TESTER_PATH" "$exec_name" "$checker_path"
 }
 
 run_manual_mode() {
-    echo -e "\n${GREEN}Starting Custom Performance Test...${NC}"
-    sleep 1
     clear
     bash "$MODULE_BRUT_PATH"
 }

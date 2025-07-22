@@ -225,6 +225,7 @@ echo -e "${NC}"
 
 test_leaks "Test leaks with an empty list" ""
 test_leaks "Test leaks with one number (3)" "3"
+test_leaks "Test leaks with two number (2 1)" "2 1"
 test_leaks "Test leaks with a zero in a list (1 3 0 4)" "1 3 0 4"
 test_leaks "Test leaks with a basic list (2 1 4 3 5)" "2 1 4 3 5"
 test_leaks "Test leaks with a negative list (-2 -1 -4 -3 -5)" "-2 -1 -4 -3 -5"

@@ -207,6 +207,7 @@ echo -e "${NC}"
 output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ' | sed 's/ $//')
 output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ' | sed 's/ $//')
 output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ' | sed 's/ $//')
+test_valid "Test with two number (2 1)" "2 1"
 test_valid "Test Zero (3 0 1 5)" "3 0 1 5"
 test_valid "Reversed order (3 2 1)" "3 2 1"
 test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"

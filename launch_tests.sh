@@ -2,6 +2,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 MODULE_TESTER_PATH="$SCRIPT_DIR/module_tester.sh"
+MODULE_42_PATH="$SCRIPT_DIR/module_42.sh"
 MODULE_BRUT_PATH="$SCRIPT_DIR/module_brut.sh"
 
 GREEN="\033[0;32m"
@@ -59,8 +60,8 @@ display_menu() {
     echo -e "${YELLOW}=========================================${NC}"
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
-    echo "  1. Evaluation Mode (predefined tests and scoring)"
-    echo "  2. Custom Performance Test (custom tests in loop)"
+    echo "  1. 42 Evaluation"
+    echo "  2. Custom Performance Test"
     echo "  3. Exit"
     echo ""
 }
@@ -68,6 +69,11 @@ display_menu() {
 run_evaluation_mode() {
     clear
     bash "$MODULE_TESTER_PATH" "$exec_name" "$checker_path"
+}
+
+run_42_mode() {
+    clear
+    bash "$MODULE_42_PATH" "$exec_name" "$checker_path"
 }
 
 run_manual_mode() {
@@ -81,7 +87,7 @@ while true; do
 
     case "$choice" in
         1)
-            run_evaluation_mode
+            run_42_mode
             echo -e "\n${YELLOW}Press Enter to return to the menu...${NC}"
             read -r
             ;;
@@ -92,7 +98,6 @@ while true; do
             ;;
         3)
             clear
-            echo -e "\n${GREEN}Goodbye!${NC}"
             exit 0
             ;;
         *)

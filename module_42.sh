@@ -163,21 +163,81 @@ test_norminette() {
     fi
 }
 
+check_forbidden_functions() {
+    local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system"
+    local desc="Forbidden functions in source code"
+    local found=""
+
+    for f in $forbidden_funcs; do
+        local matches
+        matches=$(grep -r -w --include=\*.{c,h} "$f" . 2>/dev/null | grep -vE '^\./(build|\.git)/')
+        if [ -n "$matches" ]; then
+            found="$found$f"$'\n'
+        fi
+    done
+
+    if [ -z "$found" ]; then
+        print_result "OK" "$desc"
+        return 0
+    else
+        found=$(echo "$found" | sed '/^$/d')
+
+        local count
+        count=$(echo "$found" | grep -c .)
+        printf "%-50s : %b%s%b [%d forbidden function(s) found]\n" "$desc" "$RED" "KO" "$NC" "$count"
+        echo "$found" | sed 's/^/  - /'
+        return 1
+    fi
+}
+
 ### --- TESTS ---
 
 # Colors for section headers
 echo -e "${YELLOW}"
 echo "========================================"
-echo "              NORMINETTE               "
+echo "       NORMINETTE and FONCTIONS         "
 echo "========================================"
 echo -e "${NC}"
 
-test_norminette "Norminette tests"
+test_norminette "Norminette"
+check_forbidden_functions "Forbidden Fonctions"
 
 echo -e "${YELLOW}"
 echo "========================================"
-echo "             Error Tests                "
+echo "                 Leaks                  "
 echo "========================================"
+echo -e "${NC}"
+
+test_leaks "Empty list" ""
+test_leaks "One number (3)" "3"
+test_leaks "Two number (2 1)" "2 1"
+test_leaks "Zero in a list (1 3 0 4)" "1 3 0 4"
+test_leaks "Basic list (2 1 4 3 5)" "2 1 4 3 5"
+test_leaks "Negative list (-2 -1 -4 -3 -5)" "-2 -1 -4 -3 -5"
+test_leaks "Sorted list (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
+test_leaks "Error 1 (1 2 3 3) " "1 2 3 3"
+test_leaks "Error 2 (a) " "a"
+test_leaks "Error 3 (1 4 4.5 3.9) " "1 4 4.5 3.9"
+test_leaks "Error 4 (3 6 4a b c) " "3 6 4a b c"
+test_leaks "Error 5 (1 2 9 -2147483649 5) " "1 2 9 -2147483649 5"
+
+ARG=$(seq 1 10 | sort -R | tr '\n' ' ')
+test_leaks "Small args (10)" "$ARG"
+
+ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
+test_leaks "Medium args (100)" "$ARG"
+
+ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
+test_leaks "Big args (1000)" "$ARG"
+
+echo -e "${YELLOW}"
+echo "========================================"
+echo "         Evaluation Sheet for 42        "
+echo "========================================"
+echo -e "${NC}"
+
+echo -e "${YELLOW}"
+echo "===============  Error  ================"
 echo -e "${NC}"
 
 test_error "Duplicate values (1 2 2)" "1 2 2"
@@ -187,98 +247,42 @@ test_error "INT_MAX (2 5 2147483648 97)" "2 5 2147483648 97"
 test_error "INT_MIN (1 9 5 -2147483649 -5)" "1 9 5 -2147483649 -5"
 
 echo -e "${YELLOW}"
-echo "========================================"
-echo "             Empty Inputs               "
-echo "========================================"
+echo "============  Empty Input  ============="
 echo -e "${NC}"
 
-empty_test "Empty input ()"
-empty_test "Empty string (\"\")"
-empty_test "Single number (1)" "1"
-empty_test "Sorted 3 elements (1 2 3)" "1 2 3"
-empty_test "Sorted 9 elements (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
+empty_test "One number (42)" "42"
+empty_test "Already Sorted 1 (2 3)" "2 3"
+empty_test "Already Sorted 2 (0 1 2 3)" "0 1 2 3"
+empty_test "Already Sorted 3 (0 1 2 3 4 5 6 7 8 9)" "0 1 2 3 4 5 6 7 8 9"
 
 echo -e "${YELLOW}"
-echo "========================================"
-echo "              Simple Cases              "
-echo "========================================"
+echo "============  Simple Cases  ============"
 echo -e "${NC}"
 
-output_test1=$(shuf -i 1-10000 -n 100 | tr '\n' ' ' | sed 's/ $//')
-output_test2=$(shuf -i 1-10000 -n 500 | tr '\n' ' ' | sed 's/ $//')
-output_test3=$(shuf -i 1-10000 -n 1000 | tr '\n' ' ' | sed 's/ $//')
-test_valid "Test Zero (2 1)" "2 1"
-test_valid "Test Zero (3 0 1 5)" "3 0 1 5"
-test_valid "Reversed order (3 2 1)" "3 2 1"
-test_valid "Negative numbers (-1 -5 -60)" "-1 -5 -60"
-test_valid "Random 5 elements (3 1 5 2 4)" "3 1 5 2 4"
-test_valid "Multiple spaces (1      9  2   8)" "1      9  2   8"
-test_valid "Small random input (100)" "$output_test1"
-test_valid "Medium random input (500)" "$output_test2"
-test_valid "Big random input (1000)" "$output_test3"
+three_test1=$(shuf -i 1-10000 -n 3 | tr '\n' ' ' | sed 's/ $//')
+three_test2=$(shuf -i 1-10000 -n 3 | tr '\n' ' ' | sed 's/ $//')
+three_test3=$(shuf -i 1-10000 -n 3 | tr '\n' ' ' | sed 's/ $//')
+five_test1=$(shuf -i 1-10000 -n 5 | tr '\n' ' ' | sed 's/ $//')
+five_test2=$(shuf -i 1-10000 -n 5 | tr '\n' ' ' | sed 's/ $//')
+five_test3=$(shuf -i 1-10000 -n 5 | tr '\n' ' ' | sed 's/ $//')
 
-echo -e "${YELLOW}"
-echo "========================================"
-echo "              Leaks Tests               "
-echo "========================================"
-echo -e "${NC}"
-
-test_leaks "Test leaks with an empty list" ""
-test_leaks "Test leaks with one number (3)" "3"
-test_leaks "Test leaks with one number (2 1)" "2 1"
-test_leaks "Test leaks with a zero in a list (1 3 0 4)" "1 3 0 4"
-test_leaks "Test leaks with a basic list (2 1 4 3 5)" "2 1 4 3 5"
-test_leaks "Test leaks with a negative list (-2 -1 -4 -3 -5)" "-2 -1 -4 -3 -5"
-test_leaks "Test leaks with a sorted list (1 2 3 4 5 6 7 8 9)" "1 2 3 4 5 6 7 8 9"
-test_leaks "Test leaks with an error 1 (1 2 3 3) " "1 2 3 3"
-test_leaks "Test leaks with an error 2 (a) " "a"
-test_leaks "Test leaks with an error 3 (1 4 4.5 3.9) " "1 4 4.5 3.9"
-test_leaks "Test leaks with an error 4 (3 6 4a b c) " "3 6 4a b c"
-test_leaks "Test leaks with an error 5 (1 2 9 -2147483649 5) " "1 2 9 -2147483649 5"
-
-ARG=$(seq 1 10 | sort -R | tr '\n' ' ')
-test_leaks "Test leaks with small args (10)" "$ARG"
-
-ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
-test_leaks "Test leaks with medium args (100)" "$ARG"
-
-ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
-test_leaks "Test leaks with big args (1000)" "$ARG"
-
-echo -e "${YELLOW}"
-echo "========================================"
-echo "        Evaluation Sheet for 42         "
-echo "========================================"
-echo -e "${NC}"
-
-empty_test "Evaluation sheet 1 (42)" "42"
-empty_test "Evaluation sheet 2 (2 3)" "2 3"
-empty_test "Evaluation sheet 3 (0 1 2 3)" "0 1 2 3"
-empty_test "Evaluation sheet 4 (0 1 2 3 4 5 6 7 8 9)" "0 1 2 3 4 5 6 7 8 9"
-test_valid "Evaluation sheet 5 (2 1 0)" "2 1 0"
-test_valid "Evaluation sheet 6 (1 5 2 4 3)" "1 5 2 4 3"
-
-echo -e "${YELLOW}"
-echo "========================================"
-echo "  Performance Tests (250 random tests)  "
-echo "========================================"
-echo -e "${NC}"
-
+test_valid "Three numbers (2 1 0)" "2 1 0"
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
 test_ops_count "3 random elements (< 3 ops)" "$ARG" 3 250
 
+test_valid "Five numbers (1 5 2 4 3)" "1 5 2 4 3"
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
 test_ops_count "5 random elements (< 12 ops)" "$ARG" 12 250
+
+echo -e "${YELLOW}"
+echo "=========  Performance Tests  =========="
+echo -e "${NC}"
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 test_ops_count "100 random elements (< 1500 ops)" "$ARG" 1500 250
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 test_ops_count "500 random elements (< 11500 ops)" "$ARG" 11500 250
-
-
-
-
 
 calculate_score() {
     score_100=$1
@@ -303,7 +307,6 @@ calculate_score() {
     echo -e "100 elements performance: ${score_100}/5"
     echo -e "500 elements performance: ${score_500}/5"
     echo -e "${YELLOW}Estimated score: ${global_score}/100${NC}"
-
 }
 
 get_score1(){

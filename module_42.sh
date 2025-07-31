@@ -2,7 +2,8 @@
 
 PS=$1
 CK=$2
-
+avg_ops_100=0
+avg_ops_500=0
 GREEN="\033[0;32m"
 RED="\033[0;31m"
 YELLOW="\033[0;33m"
@@ -77,12 +78,13 @@ test_ops_count() {
     nb_tests=${4:-1}
 
     fail=0
-    size=$(( $(echo $input | wc -w) ))
+    total_ops=0
+    size=$(( $(echo "$input" | wc -w) ))
 
     for i in $(seq 1 $nb_tests); do
         result=$("$PS" $input | "$CK" $input)
         if [ "$result" = "KO" ]; then
-            failed_tests=$((failed_tests - 1))
+            failed_tests=$((failed_tests + 1))
             print_result "KO" "$desc"
             return 1
         fi
@@ -92,6 +94,7 @@ test_ops_count() {
 
         output=$($PS $input)
         ops=$(echo "$output" | wc -l)
+        total_ops=$((total_ops + ops))
 
         percent=$((i * 100 / nb_tests ))
         padding=$((MAX_DESC_LENGTH - ${#desc}))
@@ -102,15 +105,17 @@ test_ops_count() {
         fi
     done
 
-    # Efface la ligne en fin de boucle et affiche OK/KO finale
+    average_ops=$((total_ops / nb_tests))
+
     printf "\r%*s\r" $((MAX_DESC_LENGTH + 10)) ""
     padding=$((MAX_DESC_LENGTH - ${#desc}))
     printf "%s%*s : " "$desc" "$padding" ""
+
     if [ "$fail" -eq 0 ]; then
-        echo -e "${GREEN}OK${NC}"
+        echo -e "${GREEN}OK${NC} [avg $average_ops ops]"
     else
         failed_tests=$((failed_tests + 1))
-        echo -e "${RED}KO${NC} (Too many operations in at least one test)"
+        echo -e "${RED}KO${NC} [avg $average_ops ops] (Too many operations in at least one test)"
     fi
 }
 

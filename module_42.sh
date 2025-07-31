@@ -251,7 +251,8 @@ echo -e "${YELLOW}"
 echo "===============  Error  ================"
 echo -e "${NC}"
 
-test_error "Duplicate values (2 1 2)" "2 1 2"
+test_error "Duplicate values 1 (2 2)" "2 1 2"
+test_error "Duplicate values 2 (2 1 2)" "2 1 2"
 test_error "Non-numeric input (a b c)" "a b c"
 test_error "Floating point numbers (1.5 2.6)" "1.5 2.6"
 test_error "INT_MAX (2 5 2147483648 97)" "2 5 2147483648 97"
@@ -303,7 +304,7 @@ calculate_score() {
 
     if [ "$score_100" -ge 1 ] && [ "$score_500" -ge 1 ]; then
         if [ "$base_score" -lt 0 ]; then base_score=0; fi
-        global_score=$((80 + (score_100 + score_500) * 2))
+        global_score=$((80 + (score_100 + score_500) * 4))
     else
         global_score=$base_score
     fi

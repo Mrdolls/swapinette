@@ -112,10 +112,10 @@ test_ops_count() {
     printf "%s%*s : " "$desc" "$padding" ""
 
     if [ "$fail" -eq 0 ]; then
-        echo -e "${GREEN}OK${NC} [avg $average_ops ops]"
+        echo -e "${GREEN}OK${NC} ~> avg $average_ops ops"
     else
         failed_tests=$((failed_tests + 1))
-        echo -e "${RED}KO${NC} [avg $average_ops ops] (Too many operations in at least one test)"
+        echo -e "${RED}KO${NC} ~> avg $average_ops ops (Too many operations in at least one test)"
     fi
 }
 

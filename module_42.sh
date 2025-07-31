@@ -106,6 +106,14 @@ test_ops_count() {
     done
 
     average_ops=$((total_ops / nb_tests))
+    average_ops=$((total_ops / nb_tests))
+
+    size=$(echo "$input" | wc -w)
+    if [ "$size" = 100 ]; then
+        avg_ops_100=$average_ops
+    elif [ "$size" = 500 ]; then
+        avg_ops_500=$average_ops
+    fi
 
     printf "\r%*s\r" $((MAX_DESC_LENGTH + 10)) ""
     padding=$((MAX_DESC_LENGTH - ${#desc}))
@@ -196,8 +204,6 @@ check_forbidden_functions() {
 }
 
 ### --- TESTS ---
-
-# Colors for section headers
 echo -e "${YELLOW}"
 echo "========================================"
 echo "       NORMINETTE and FONCTIONS         "
@@ -315,15 +321,8 @@ calculate_score() {
 }
 
 get_score1(){
-# Test 100 éléments
 score_100=0
-ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
-ops_100=$($PS $ARG | wc -l)
-ko_test1=$("$PS" $ARG | "$CK" $ARG)
-if [ "$ko_test1" = "KO" ]; then
-    score_100=0
-    return 1
-fi
+ops_100=$avg_ops_100
 if [ "$ops_100" -lt 700 ]; then score_100=5
 elif [ "$ops_100" -lt 900 ]; then score_100=4
 elif [ "$ops_100" -lt 1100 ]; then score_100=3
@@ -332,15 +331,8 @@ elif [ "$ops_100" -lt 1500 ]; then score_100=1
 fi
 }
 get_score2(){
-# Test 500 éléments
 score_500=0
-ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
-ops_500=$($PS $ARG | wc -l)
-ko_test2=$("$PS" $ARG | "$CK" $ARG)
-if [ "$ko_test2" = "KO" ]; then
-    score_100=0
-    return 1
-fi
+ops_500=$avg_ops_500
 if [ "$ops_500" -lt 5500 ]; then score_500=5
 elif [ "$ops_500" -lt 7000 ]; then score_500=4
 elif [ "$ops_500" -lt 8500 ]; then score_500=3

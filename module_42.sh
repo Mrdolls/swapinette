@@ -179,27 +179,28 @@ test_norminette() {
 check_forbidden_functions() {
     local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system"
     local desc="Forbidden functions in source code"
-    local found=""
+    local results=()
+    local count=0
 
     for f in $forbidden_funcs; do
-        matches=$(grep -r -n --include=\*.{c,h} -E "$f[[:space:]]*\(" . 2>/dev/null | \
+        matches=$(grep -r -n --include=\*.{c,h} -E "[^[:alnum:]_]$f[[:space:]]*\(" . 2>/dev/null | \
             grep -vE '^\./(build|\.git)/' | \
             grep -vE '^[[:space:]]*(//|/\*|\*|#)')
 
-        if echo "$matches" | grep -q "$f"; then
-            found="$found$f"$'\n'
+        if [ -n "$matches" ]; then
+            files=$(echo "$matches" | cut -d: -f1 | sort -u | sed 's|^\./||')
+            files_joined=$(echo "$files" | paste -sd, -)
+            results+=("- $f [$files_joined]")
+            count=$((count + 1))
         fi
     done
 
-    if [ -z "$found" ]; then
-        print_result "OK" "$desc"
+    if [ "$count" -eq 0 ]; then
+        printf "%-50s : %bOK%b\n" "$desc" "$GREEN" "$NC"
         return 0
     else
-        found=$(echo "$found" | sed '/^$/d')
-        local count
-        count=$(echo "$found" | grep -c .)
-        printf "%-50s : %b%s%b [%d forbidden function(s) found]\n" "$desc" "$RED" "KO" "$NC" "$count"
-        echo "$found" | sed 's/^/  - /'
+        printf "%-50s : %bKO%b [%d forbidden function(s) found]\n" "$desc" "$RED" "$NC" "$count"
+        printf '%s\n' "${results[@]}"
         return 1
     fi
 }

@@ -59,7 +59,7 @@ find_upwards() {
 exec_name=$(find_upwards "push_swap")
 if [ -z "$exec_name" ]; then
     echo -e "${RED}✘ Error: Executable 'push_swap' not found.${NC}"
-    echo "  Make sure it is compiled and has execution permissions (chmod +x push_swap)."
+    echo "Make sure it is compiled and has execution permissions (chmod +x push_swap)."
     exit 1
 fi
 

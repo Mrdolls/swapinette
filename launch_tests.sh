@@ -2,7 +2,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 VERSION_FILE="$SCRIPT_DIR/version.txt"
-CURRENT_VERSION="v2.12.4"  # version codée en dur actuelle
+CURRENT_VERSION=""
 
 get_git_version() {
     git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "unknown"
@@ -16,10 +16,10 @@ stored_version=$(<"$VERSION_FILE")
 latest_version=$(get_git_version)
 
 if [ "$latest_version" = "unknown" ]; then
-    echo "⚠️ Impossible de récupérer la version git (pas dans un repo git ?)"
+    echo "Impossible de récupérer la version git (pas dans un repo git ?)"
 else
     if [ "$latest_version" != "$stored_version" ]; then
-        echo "🔄 Nouvelle version détectée : $latest_version (stockée : $stored_version)"
+        echo "Nouvelle version détectée : $latest_version (stockée : $stored_version)"
         echo "Mise à jour de swapinette..."
 
         git -C "$SCRIPT_DIR" pull
@@ -27,10 +27,7 @@ else
         echo "$latest_version" > "$VERSION_FILE"
 
         echo "Mise à jour terminée. Relance automatique du script..."
-
-        # Relancer le script avec les mêmes arguments
         exec "$0" "$@"
-        # exec remplace le processus courant par le nouveau lancement
     fi
 fi
 MODULE_TESTER_PATH="$SCRIPT_DIR/module_tester.sh"

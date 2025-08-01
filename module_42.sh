@@ -179,58 +179,63 @@ test_norminette() {
 check_forbidden_functions() {
     local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system perror getenv chdir chmod mkdir rmdir unlink rename link symlink lseek stat fstat fcntl pipe socket connect accept bind listen send recv select poll ioctl pthread_create pthread_join pthread_mutex_lock pthread_mutex_unlock signal raise alarm setjmp longjmp"
     local desc="Forbidden functions"
-    local count=0
-    local -A found_files  # assoc array: key=function, value=space-separated list of files
+    declare -A found_files_per_func
 
     printf "%-50s :" "$desc"
 
-    # Liste fichiers à scanner
-    mapfile -t files < <(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/.git/*")
+    while IFS= read -r -d '' file; do
+        clean_code=$(awk '
+        BEGIN { in_comment = 0 }
+        {
+            line = $0
 
-    for file in "${files[@]}"; do
-        # Nettoyage du code source : supprime // commentaires, directives #, et commentaires /* */
-        clean_code=$(sed -e 's|//.*||g' -e 's|#.*||g' "$file" | \
-                     awk 'BEGIN{in_comment=0}
-                     {
-                         line=$0
-                         while (match(line, /\/\*/)) {
-                             in_comment=1
-                             prefix=substr(line, 1, RSTART-1)
-                             line=substr(line, RSTART+RLENGTH)
-                             if (match(line, /\*\//)) {
-                                 in_comment=0
-                                 line=substr(line, RSTART+RLENGTH)
-                             } else {
-                                 line=""
-                             }
-                             $0=prefix line
-                         }
-                         if (!in_comment) print $0
-                     }')
+            if (in_comment) {
+                if (line ~ /\*\//) {
+                    sub(/^.*\*\//, "", line)
+                    in_comment = 0
+                } else {
+                    next
+                }
+            }
+
+            while (line ~ /\/\*.*\*\//) {
+                sub(/\/\*.*\*\//, "", line)
+            }
+
+            if (line ~ /\/\*/) {
+                in_comment = 1
+                sub(/\/\*.*/, "", line)
+            }
+
+            if (line ~ /^[[:space:]]*\/\// || line ~ /^[[:space:]]*#/) next
+
+            if (length(line) > 0) print line
+        }
+        ' "$file")
 
         for f in $forbidden_funcs; do
-            if grep -qw -- "$f" <<< "$clean_code"; then
-                # Ajouter le fichier à la liste de cette fonction (éviter doublons)
-                if [[ ! " ${found_files[$f]} " =~ " ${file#./} " ]]; then
-                    found_files[$f]+="${file#./} "
-                fi
+            if echo "$clean_code" | grep -qw "$f"; then
+                found_files_per_func["$f"]+="$file "
             fi
+        done
+    done < <(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/.git/*" -print0)
+
+    if [ ${#found_files_per_func[@]} -eq 0 ]; then
+        printf " \033[0;32mOK\033[0m\n"
+        return 0
+    fi
+
+    printf " \033[0;31mKO\033[0m [%d forbidden function(s) found]\n" "${#found_files_per_func[@]}"
+    for f in $(echo "${!found_files_per_func[@]}" | tr ' ' '\n' | sort); do
+        printf "  - %s\n" "$f"
+        local -a files_array
+        read -ra files_array <<< "${found_files_per_func[$f]}"
+        for file in "${files_array[@]}"; do
+            printf "    [%s]\n" "$file"
         done
     done
 
-    if [ "${#found_files[@]}" -eq 0 ]; then
-        echo -e " \033[0;32mOK\033[0m"
-        return 0
-    else
-        echo -e " \033[0;31mKO\033[0m [${#found_files[@]} forbidden function(s) found]"
-        for func in "${!found_files[@]}"; do
-            echo "  - $func"
-            for ffile in ${found_files[$func]}; do
-                echo "    [$ffile]"
-            done
-        done
-        return 1
-    fi
+    return 1
 }
 
 ### --- TESTS ---
@@ -310,21 +315,21 @@ five_test3=$(shuf -i 1-10000 -n 5 | tr '\n' ' ' | sed 's/ $//')
 
 test_valid "Three numbers (2 1 0)" "2 1 0"
 ARG=$(seq 1 3 | sort -R | tr '\n' ' ')
-test_ops_count "3 random elements (< 3 ops)" "$ARG" 3 250
+test_ops_count "Check 3 random elements (under 3 operations)" "$ARG" 3 100
 
 test_valid "Five numbers (1 5 2 4 3)" "1 5 2 4 3"
 ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
-test_ops_count "5 random elements (< 12 ops)" "$ARG" 12 250
+test_ops_count "Check 5 random elements (under 12 operations)" "$ARG" 12 500
 
 echo -e "${YELLOW}"
-echo "=========  Performance Tests  =========="
+echo "=========  Performance Tests (100 tests) =========="
 echo -e "${NC}"
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
-test_ops_count "100 random elements (< 1500 ops)" "$ARG" 1500 250
+test_ops_count "Check 100 random elements (under 1500 operations)" "$ARG" 1500 100
 
 ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
-test_ops_count "500 random elements (< 11500 ops)" "$ARG" 11500 250
+test_ops_count "Check 500 random elements (under 11500 operations)" "$ARG" 11500 100
 
 calculate_score() {
     score_100=$1

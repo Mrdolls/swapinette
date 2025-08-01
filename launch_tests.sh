@@ -14,6 +14,7 @@ if [ ! -f "$VERSION_FILE" ]; then
 fi
 
 stored_version=$(<"$VERSION_FILE")
+echo -e "Verifying updates..."
 latest_version=$(get_git_version)
 
 if [ "$latest_version" = "unknown" ]; then

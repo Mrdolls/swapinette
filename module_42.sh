@@ -182,9 +182,11 @@ check_forbidden_functions() {
     local found=""
 
     for f in $forbidden_funcs; do
-        local matches
-        matches=$(grep -r -w --include=\*.{c,h} "$f" . 2>/dev/null | grep -vE '^\./(build|\.git)/')
-        if [ -n "$matches" ]; then
+        matches=$(grep -r -n --include=\*.{c,h} -E "$f[[:space:]]*\(" . 2>/dev/null | \
+            grep -vE '^\./(build|\.git)/' | \
+            grep -vE '^[[:space:]]*(//|/\*|\*|#)')
+
+        if echo "$matches" | grep -q "$f"; then
             found="$found$f"$'\n'
         fi
     done
@@ -194,7 +196,6 @@ check_forbidden_functions() {
         return 0
     else
         found=$(echo "$found" | sed '/^$/d')
-
         local count
         count=$(echo "$found" | grep -c .)
         printf "%-50s : %b%s%b [%d forbidden function(s) found]\n" "$desc" "$RED" "KO" "$NC" "$count"

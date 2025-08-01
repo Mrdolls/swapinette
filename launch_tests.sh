@@ -5,6 +5,7 @@ VERSION_FILE="$SCRIPT_DIR/version.txt"
 CURRENT_VERSION=""
 
 get_git_version() {
+    git -C "$SCRIPT_DIR" fetch --tags
     git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "unknown"
 }
 

@@ -177,30 +177,58 @@ test_norminette() {
 }
 
 check_forbidden_functions() {
-    local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system"
-    local desc="Forbidden functions in source code"
-    local results=()
+    local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system perror getenv chdir chmod mkdir rmdir unlink rename link symlink lseek stat fstat fcntl pipe socket connect accept bind listen send recv select poll ioctl pthread_create pthread_join pthread_mutex_lock pthread_mutex_unlock signal raise alarm setjmp longjmp"
+    local desc="Forbidden functions"
     local count=0
+    local -A found_files  # assoc array: key=function, value=space-separated list of files
 
-    for f in $forbidden_funcs; do
-        matches=$(grep -r -n --include=\*.{c,h} -E "[^[:alnum:]_]$f[[:space:]]*\(" . 2>/dev/null | \
-            grep -vE '^\./(build|\.git)/' | \
-            grep -vE '^[[:space:]]*(//|/\*|\*|#)')
+    printf "%-50s :" "$desc"
 
-        if [ -n "$matches" ]; then
-            files=$(echo "$matches" | cut -d: -f1 | sort -u | sed 's|^\./||')
-            files_joined=$(echo "$files" | paste -sd, -)
-            results+=("- $f [$files_joined]")
-            count=$((count + 1))
-        fi
+    # Liste fichiers à scanner
+    mapfile -t files < <(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/.git/*")
+
+    for file in "${files[@]}"; do
+        # Nettoyage du code source : supprime // commentaires, directives #, et commentaires /* */
+        clean_code=$(sed -e 's|//.*||g' -e 's|#.*||g' "$file" | \
+                     awk 'BEGIN{in_comment=0}
+                     {
+                         line=$0
+                         while (match(line, /\/\*/)) {
+                             in_comment=1
+                             prefix=substr(line, 1, RSTART-1)
+                             line=substr(line, RSTART+RLENGTH)
+                             if (match(line, /\*\//)) {
+                                 in_comment=0
+                                 line=substr(line, RSTART+RLENGTH)
+                             } else {
+                                 line=""
+                             }
+                             $0=prefix line
+                         }
+                         if (!in_comment) print $0
+                     }')
+
+        for f in $forbidden_funcs; do
+            if grep -qw -- "$f" <<< "$clean_code"; then
+                # Ajouter le fichier à la liste de cette fonction (éviter doublons)
+                if [[ ! " ${found_files[$f]} " =~ " ${file#./} " ]]; then
+                    found_files[$f]+="${file#./} "
+                fi
+            fi
+        done
     done
 
-    if [ "$count" -eq 0 ]; then
-        printf "%-50s : %bOK%b\n" "$desc" "$GREEN" "$NC"
+    if [ "${#found_files[@]}" -eq 0 ]; then
+        echo -e " \033[0;32mOK\033[0m"
         return 0
     else
-        printf "%-50s : %bKO%b [%d forbidden function(s) found]\n" "$desc" "$RED" "$NC" "$count"
-        printf '%s\n' "${results[@]}"
+        echo -e " \033[0;31mKO\033[0m [${#found_files[@]} forbidden function(s) found]"
+        for func in "${!found_files[@]}"; do
+            echo "  - $func"
+            for ffile in ${found_files[$func]}; do
+                echo "    [$ffile]"
+            done
+        done
         return 1
     fi
 }

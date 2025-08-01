@@ -16,17 +16,18 @@ stored_version=$(<"$VERSION_FILE")
 latest_version=$(get_git_version)
 
 if [ "$latest_version" = "unknown" ]; then
-    echo "Impossible de récupérer la version git (pas dans un repo git ?)"
+    echo "Unable to retrieve git version (not in a git repo?)"
 else
     if [ "$latest_version" != "$stored_version" ]; then
-        echo "Nouvelle version détectée : $latest_version (stockée : $stored_version)"
-        echo "Mise à jour de swapinette..."
+        echo "New version detected: $latest_version (stored: $stored_version)"
+        echo "Updating swapinette..."
 
         git -C "$SCRIPT_DIR" pull
 
         echo "$latest_version" > "$VERSION_FILE"
 
-        echo "Mise à jour terminée. Relance automatique du script..."
+        echo "Update complete. Automatically restarting the script..."
+        sleep 3
         exec "$0" "$@"
     fi
 fi

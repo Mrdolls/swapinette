@@ -62,7 +62,7 @@ display_menu() {
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. 42 Evaluation"
     echo "  2. Custom Performance Test"
-    echo "  3. Kill Mod"
+    echo "  3. Kill Mod (Use with precaution)"
     echo "  4. Exit"
     echo ""
 }
@@ -84,7 +84,7 @@ run_manual_mode() {
 
 while true; do
     display_menu
-    read -p "Your choice [1-3]: " choice
+    read -p "Your choice [1-4]: " choice
 
     case "$choice" in
         1)

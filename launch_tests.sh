@@ -3,7 +3,7 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 MODULE_TESTER_PATH="$SCRIPT_DIR/module_tester.sh"
 MODULE_42_PATH="$SCRIPT_DIR/module_42.sh"
-MODULE_BRUT_PATH="$SCRIPT_DIR/module_brut.sh"
+MODULE_BRUT_PATH="$SCRIPT_DIR/module_perf.sh"
 
 GREEN="\033[0;32m"
 RED="\033[0;31m"
@@ -61,7 +61,7 @@ display_menu() {
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. 42 Evaluation"
-    echo "  2. Custom Performance Test"
+    echo "  2. Check Performance"
     echo "  3. Exit"
     echo ""
 }

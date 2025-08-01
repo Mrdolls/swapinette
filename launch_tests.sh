@@ -62,8 +62,7 @@ display_menu() {
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. 42 Evaluation"
     echo "  2. Custom Performance Test"
-    echo "  3. Kill Mod (Use with precaution)"
-    echo "  4. Exit"
+    echo "  3. Exit"
     echo ""
 }
 
@@ -84,7 +83,7 @@ run_manual_mode() {
 
 while true; do
     display_menu
-    read -p "Your choice [1-4]: " choice
+    read -p "Your choice [1-3]: " choice
 
     case "$choice" in
         1)
@@ -98,11 +97,6 @@ while true; do
             read -r
             ;;
         3)
-            run_evaluation_mode
-            echo -e "\n${YELLOW}Press Enter to return to the menu...${NC}"
-            read -r
-            ;;
-        4)
             clear
             exit 0
             ;;

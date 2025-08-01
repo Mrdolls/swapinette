@@ -284,11 +284,11 @@ calculate_score() {
     score_100=$1
     score_500=$2
     global_score=0
-    base_score=$((80 - failed_tests * 5))
+    base_score=80
 
     if [ "$score_100" -ge 1 ] && [ "$score_500" -ge 1 ]; then
         if [ "$base_score" -lt 0 ]; then base_score=0; fi
-        global_score=$((base_score + (score_100 + score_500) * 2))
+        global_score=$((base_score + (score_100 + score_500) * 4))
     else
         global_score=$base_score
     fi

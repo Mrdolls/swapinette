@@ -50,13 +50,15 @@ test_valid() {
 test_error() {
     desc=$1
     input=$2
-    $PS $input 1> /dev/null 2> tmp_error
-    if grep -q "Error" tmp_error; then
+    tmp_error=$(mktemp /tmp/ps_error_XXXXXX)
+
+    $PS $input 1> /dev/null 2> "$tmp_error"
+    if grep -q "Error" "$tmp_error"; then
         print_result "OK" "$desc"
     else
         print_result "KO" "$desc"
     fi
-    rm -f tmp_error
+    rm -f "$tmp_error"
 }
 
 show_progress() {

@@ -1,6 +1,38 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VERSION_FILE="$SCRIPT_DIR/version.txt"
+CURRENT_VERSION="v2.12.4"  # version codée en dur actuelle
+
+get_git_version() {
+    git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "unknown"
+}
+
+if [ ! -f "$VERSION_FILE" ]; then
+    echo "$CURRENT_VERSION" > "$VERSION_FILE"
+fi
+
+stored_version=$(<"$VERSION_FILE")
+latest_version=$(get_git_version)
+
+if [ "$latest_version" = "unknown" ]; then
+    echo "⚠️ Impossible de récupérer la version git (pas dans un repo git ?)"
+else
+    if [ "$latest_version" != "$stored_version" ]; then
+        echo "🔄 Nouvelle version détectée : $latest_version (stockée : $stored_version)"
+        echo "Mise à jour de swapinette..."
+
+        git -C "$SCRIPT_DIR" pull
+
+        echo "$latest_version" > "$VERSION_FILE"
+
+        echo "Mise à jour terminée. Relance automatique du script..."
+
+        # Relancer le script avec les mêmes arguments
+        exec "$0" "$@"
+        # exec remplace le processus courant par le nouveau lancement
+    fi
+fi
 MODULE_TESTER_PATH="$SCRIPT_DIR/module_tester.sh"
 MODULE_42_PATH="$SCRIPT_DIR/module_42.sh"
 MODULE_BRUT_PATH="$SCRIPT_DIR/module_perf.sh"
@@ -55,8 +87,13 @@ chmod +x "$MODULE_BRUT_PATH"
 
 display_menu() {
     clear
+    local version
+    version=$(git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null)
+    if [ -z "$version" ]; then
+        version="unknown"
+    fi
     echo -e "${YELLOW}=========================================${NC}"
-    echo -e "${YELLOW}              SWAPINETTE                ${NC}"
+    echo -e "${YELLOW}          SWAPINETTE ${version}              ${NC}"
     echo -e "${YELLOW}=========================================${NC}"
     echo ""
     echo -e "${BLUE}Select an option:${NC}"

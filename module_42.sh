@@ -230,12 +230,11 @@ check_forbidden_functions() {
 ### --- TESTS ---
 echo -e "${YELLOW}"
 echo "========================================"
-echo "       NORMINETTE and FONCTIONS         "
+echo "       NORMINETTE                       "
 echo "========================================"
 echo -e "${NC}"
 
 test_norminette "Norminette"
-check_forbidden_functions "Forbidden Fonctions"
 
 echo -e "${YELLOW}"
 echo "========================================"

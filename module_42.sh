@@ -53,13 +53,19 @@ test_error() {
     tmp_error=$(mktemp /tmp/ps_error_XXXXXX)
 
     $PS $input 1> /dev/null 2> "$tmp_error"
-    if grep -q "Error" "$tmp_error"; then
+    exit_code=$?
+
+    if [ $exit_code -ne 0 ]; then
+        print_result "KO" "$desc"
+        echo "[Program exited with code $exit_code]"
+    elif grep -q "Error" "$tmp_error"; then
         print_result "OK" "$desc"
     else
         print_result "KO" "$desc"
     fi
     rm -f "$tmp_error"
 }
+
 
 show_progress() {
     current=$1

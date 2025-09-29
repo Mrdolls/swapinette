@@ -57,12 +57,13 @@ test_error() {
 
     if [ $exit_code -ne 0 ]; then
         print_result "KO" "$desc"
-        echo "[Program exited with code $exit_code]"
-    elif grep -q "Error" "$tmp_error"; then
+        echo "[Program crashed or exited with code $exit_code]"
+    elif grep -q "^Error$" "$tmp_error"; then
         print_result "OK" "$desc"
     else
         print_result "KO" "$desc"
     fi
+
     rm -f "$tmp_error"
 }
 

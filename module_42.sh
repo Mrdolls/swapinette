@@ -238,7 +238,7 @@ test_norminette "Norminette"
 
 echo -e "${YELLOW}"
 echo "========================================"
-echo "                 Leaks                  "
+echo "                 Leaks without \"\"     "
 echo "========================================"
 echo -e "${NC}"
 
@@ -263,6 +263,34 @@ test_leaks "Medium args (100)" "$ARG"
 
 ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
 test_leaks "Big args (1000)" "$ARG"
+
+echo -e "${YELLOW}"
+echo "========================================"
+echo "                 Leaks with \"\"        "
+echo "========================================"
+echo -e "${NC}"
+
+test_leaks "Empty list" ""
+test_leaks "One number (3)" "\"3\""
+test_leaks "Two number (2 1)" "\"2 1\""
+test_leaks "Zero in a list (1 3 0 4)" "\"1 3 0 4\""
+test_leaks "Basic list (2 1 4 3 5)" "\"2 1 4 3 5\""
+test_leaks "Negative list (-2 -1 -4 -3 -5)" "\"-2 -1 -4 -3 -5\""
+test_leaks "Sorted list (1 2 3 4 5 6 7 8 9)" "\"1 2 3 4 5 6 7 8 9\""
+test_leaks "Error 1 (1 2 3 3) " "\"1 2 3 3\""
+test_leaks "Error 2 (a) " "\"a\""
+test_leaks "Error 3 (1 4 4.5 3.9) " "\"1 4 4.5 3.9\""
+test_leaks "Error 4 (3 6 4a b c) " "\"3 6 4a b c\""
+test_leaks "Error 5 (1 2 9 -2147483649 5) " "\"1 2 9 -2147483649 5\""
+
+ARG=$(seq 1 10 | sort -R | tr '\n' ' ')
+test_leaks "Small args (10)" "\"$ARG\""
+
+ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
+test_leaks "Medium args (100)" "\"$ARG\""
+
+ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
+test_leaks "Big args (1000)" "\"$ARG\""
 
 echo -e "${YELLOW}"
 echo "========================================"

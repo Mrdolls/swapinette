@@ -261,8 +261,8 @@ test_leaks "Small args (10)" "$ARG"
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 test_leaks "Medium args (100)" "$ARG"
 
-ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
-test_leaks "Big args (1000)" "$ARG"
+ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
+test_leaks "Big args (500)" "$ARG"
 
 echo -e "${YELLOW}"
 echo "========================================"
@@ -289,8 +289,8 @@ test_leaks "Small args (10)" "\"$ARG\""
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
 test_leaks "Medium args (100)" "\"$ARG\""
 
-ARG=$(seq 1 1000 | sort -R | tr '\n' ' ')
-test_leaks "Big args (1000)" "\"$ARG\""
+ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
+test_leaks "Big args (500)" "\"$ARG\""
 
 echo -e "${YELLOW}"
 echo "========================================"

@@ -138,32 +138,23 @@ test_leaks() {
         echo "[Valgrind not installed]"
         return
     fi
+    valgrind_output=$(LANG=C valgrind --leak-check=full --error-exitcode=42 $PS $args 2>&1)
+    leaks_summary=$(echo "$valgrind_output" | grep "lost:")
 
-    valgrind_output=$(LANG=C valgrind $PS $args 2>&1)
-    lost_line=$(echo "$valgrind_output" | grep "definitely lost:" | head -1)
-
-    if [ -n "$lost_line" ]; then
-        lost_bytes=$(echo "$lost_line" | awk '{print $4}')
-        if ! [[ "$lost_bytes" =~ ^[0-9]+$ ]]; then
-            print_result "KO" "$desc"
-            echo "[Valgrind parsing error: lost_bytes='$lost_bytes']"
-            return
-        fi
-        if [ "$lost_bytes" -eq 0 ]; then
-            print_result "OK" "$desc"
-        else
-            printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[definitely lost = $lost_bytes bytes]"
-        fi
+    if echo "$leaks_summary" | grep -Eq "definitely lost: +[1-9][0-9]* bytes"; then
+        print_result "KO" "$desc"
+        echo "[Memory leak detected: $(echo "$leaks_summary" | grep 'definitely lost')]"
+    elif echo "$leaks_summary" | grep -Eq "indirectly lost: +[1-9][0-9]* bytes"; then
+        print_result "KO" "$desc"
+        echo "[Indirect leak detected: $(echo "$leaks_summary" | grep 'indirectly lost')]"
+    elif echo "$leaks_summary" | grep -Eq "possibly lost: +[1-9][0-9]* bytes"; then
+        print_result "KO" "$desc"
+        echo "[Possible leak detected: $(echo "$leaks_summary" | grep 'possibly lost')]"
     else
-        freed_line=$(echo "$valgrind_output" | grep "All heap blocks were freed -- no leaks are possible")
-        if [ -n "$freed_line" ]; then
-            print_result "OK" "$desc"
-        else
-            print_result "KO" "$desc"
-            echo "[Valgrind output missing definitely lost info and no confirmation of no leaks]"
-        fi
+        print_result "OK" "$desc"
     fi
 }
+
 
 test_norminette() {
     desc=$1

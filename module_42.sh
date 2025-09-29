@@ -138,22 +138,18 @@ test_leaks() {
         echo "[Valgrind not installed]"
         return
     fi
-    valgrind_output=$(LANG=C valgrind --leak-check=full --error-exitcode=42 $PS $args 2>&1)
-    leaks_summary=$(echo "$valgrind_output" | grep "lost:")
 
-    if echo "$leaks_summary" | grep -Eq "definitely lost: +[1-9][0-9]* bytes"; then
-        print_result "KO" "$desc"
-        echo "[Memory leak detected: $(echo "$leaks_summary" | grep 'definitely lost')]"
-    elif echo "$leaks_summary" | grep -Eq "indirectly lost: +[1-9][0-9]* bytes"; then
-        print_result "KO" "$desc"
-        echo "[Indirect leak detected: $(echo "$leaks_summary" | grep 'indirectly lost')]"
-    elif echo "$leaks_summary" | grep -Eq "possibly lost: +[1-9][0-9]* bytes"; then
-        print_result "KO" "$desc"
-        echo "[Possible leak detected: $(echo "$leaks_summary" | grep 'possibly lost')]"
+    valgrind_output=$(LANG=C valgrind --leak-check=full $PS $args 2>&1)
+    leaks_summary=$(echo "$valgrind_output" | grep -E "definitely lost:|indirectly lost:|possibly lost:|still reachable:")
+    leak_line=$(echo "$leaks_summary" | awk '$4 != 0 {print; exit}')
+
+    if [ -n "$leak_line" ]; then
+        printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[$leak_line]"
     else
         print_result "OK" "$desc"
     fi
 }
+
 
 
 test_norminette() {

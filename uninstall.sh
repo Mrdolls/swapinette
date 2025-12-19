@@ -3,27 +3,46 @@
 INSTALL_DIR="$HOME/.swapinette"
 COMMAND_NAME="swapinette"
 
-echo "Uninstalling Swapinette..."
+# Couleurs
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-if [ -d "$INSTALL_DIR" ]; then
-    rm -rf "$INSTALL_DIR"
-    echo "✔ Removed $INSTALL_DIR"
-else
-    echo "ℹ No installation directory found"
-fi
+# Confirmation
+read -n1 -r -p "${YELLOW}[⚠] Are you sure you want to uninstall Swapinette? [y/N] ${NC}" answer
+echo
+case "$answer" in
+    y|Y)
+        echo -e "${RED}[ℹ] Uninstalling Swapinette...${NC}"
 
-SHELL_CONFIG=""
-shell_name=$(basename "$SHELL")
+        # Supprimer le dossier d'installation
+        if [ -d "$INSTALL_DIR" ]; then
+            rm -rf "$INSTALL_DIR"
+            echo -e "${GREEN}[✔] Removed $INSTALL_DIR${NC}"
+        else
+            echo -e "${YELLOW}[ℹ] No installation directory found${NC}"
+        fi
 
-case "$shell_name" in
-    zsh)   SHELL_CONFIG="$HOME/.zshrc" ;;
-    bash)  SHELL_CONFIG="$HOME/.bashrc" ;;
-    *)     SHELL_CONFIG="$HOME/.profile" ;;
+        # Supprimer l'alias dans le shell config
+        SHELL_CONFIG=""
+        shell_name=$(basename "$SHELL")
+
+        case "$shell_name" in
+            zsh)   SHELL_CONFIG="$HOME/.zshrc" ;;
+            bash)  SHELL_CONFIG="$HOME/.bashrc" ;;
+            *)     SHELL_CONFIG="$HOME/.profile" ;;
+        esac
+
+        if [ -f "$SHELL_CONFIG" ]; then
+            sed -i.bak "/alias $COMMAND_NAME=/d" "$SHELL_CONFIG"
+            echo -e "${GREEN}[✔] Alias removed from $SHELL_CONFIG${NC} (backup saved as $SHELL_CONFIG.bak)"
+        fi
+
+        echo -e "${GREEN}[✔] Swapinette has been successfully uninstalled!${NC}"
+        ;;
+    *)
+        echo -e "${YELLOW}[ℹ] Uninstallation cancelled.${NC}"
+        ;;
 esac
-
-if [ -f "$SHELL_CONFIG" ]; then
-    sed -i.bak "/alias $COMMAND_NAME=/d" "$SHELL_CONFIG"
-    echo "✔ Alias removed from $SHELL_CONFIG (backup saved as $SHELL_CONFIG.bak)"
-fi
-
-echo "Swapinette has been successfully uninstalled!"

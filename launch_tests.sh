@@ -39,6 +39,20 @@ check_update() {
     fi
 }
 
+cleanup() {
+    trap - EXIT SIGINT SIGTERM
+    local make_path=$(dirname "$PS_PATH")
+    echo -e "\n${YELLOW}[ℹ] Cleaning up (make fclean)...${NC}"
+    if [ -f "$make_path/Makefile" ]; then
+        make -C "$make_path" fclean > /dev/null 2>&1
+        echo -e "${GREEN}[✔] Cleanup complete.${NC}"
+    else
+        echo -e "${RED}[!] Makefile not found, could not run fclean.${NC}"
+    fi
+    exit 0
+}
+trap cleanup EXIT SIGINT SIGTERM
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 VERSION_FILE="$SCRIPT_DIR/version.txt"
 
@@ -73,7 +87,7 @@ compile_push_swap() {
     if [ ! -f ./push_swap ]; then
         echo -e "${YELLOW}[ℹ] push_swap not found, compiling...${NC}"
         if [ -f Makefile ]; then
-            make
+            make -j$(nproc 2>/dev/null || echo 1) > /dev/null 2>&1
             if [ ! -f ./push_swap ]; then
                 echo -e "${RED}✘ Error:  Compilation failed: push_swap still missing${NC}"
                 exit 1

@@ -251,9 +251,9 @@ echo -e "${NC}"
 test_norminette "Norminette"
 
 echo -e "${YELLOW}"
-echo "========================================"
-echo "                 Leaks without \"\"     "
-echo "========================================"
+    echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║            Leaks Without \"\"          ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
 echo -e "${NC}"
 
 test_leaks "Empty list" ""
@@ -279,9 +279,9 @@ ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 test_leaks "Big args (500)" "$ARG"
 
 echo -e "${YELLOW}"
-echo "========================================"
-echo "                 Leaks with \"\"        "
-echo "========================================"
+    echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║             Leaks With \"\"            ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
 echo -e "${NC}"
 
 test_leaks "Empty list" ""
@@ -307,13 +307,13 @@ ARG=$(seq 1 500 | sort -R | tr '\n' ' ')
 test_leaks "Big args (500)" "\"$ARG\""
 
 echo -e "${YELLOW}"
-echo "========================================"
-echo "         Evaluation Sheet for 42        "
-echo "========================================"
+    echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║        Correction Sheet for 42       ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
 echo -e "${NC}"
 
 echo -e "${YELLOW}"
-echo "===============  Error  ================"
+echo "════════════════  Error  ════════════════"
 echo -e "${NC}"
 
 test_error "Duplicate values 1 (2 2)" "2 1 2"
@@ -324,7 +324,7 @@ test_error "INT_MAX (2 5 2147483648 97)" "2 5 2147483648 97"
 test_error "INT_MIN (1 9 5 -2147483649 -5)" "1 9 5 -2147483649 -5"
 
 echo -e "${YELLOW}"
-echo "============  Empty Input  ============="
+echo "═════════════  Empty Input  ═════════════"
 echo -e "${NC}"
 
 empty_test "One number (42)" "42"
@@ -333,7 +333,7 @@ empty_test "Already Sorted 2 (0 1 2 3)" "0 1 2 3"
 empty_test "Already Sorted 3 (0 1 2 3 4 5 6 7 8 9)" "0 1 2 3 4 5 6 7 8 9"
 
 echo -e "${YELLOW}"
-echo "============  Simple Cases  ============"
+echo "════════════  Simple Cases  ═════════════"
 echo -e "${NC}"
 
 three_test1=$(shuf -i 1-10000 -n 3 | tr '\n' ' ' | sed 's/ $//')
@@ -352,7 +352,7 @@ ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
 test_ops_count "Check 5 random elements (under 12 operations)" "$ARG" 12 500
 
 echo -e "${YELLOW}"
-echo "=========  Performance Tests (100 tests) =========="
+echo "═════  Performance Tests (100 tests)  ════"
 echo -e "${NC}"
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')
@@ -375,9 +375,9 @@ calculate_score() {
     fi
 
     echo -e "${YELLOW}"
-    echo "========================================"
-    echo "             Final Result               "
-    echo "========================================"
+    echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║             Final Result             ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
     echo -e "${NC}"
 
     echo -e "${GREEN}All critical tests passed.${NC}"

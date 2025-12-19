@@ -113,8 +113,6 @@ done <<< "$text"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔ Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"
-    echo -e "${C_YELLOW}[ℹ] Launching Swapinette..${C_RESET}\n"
-    sleep 3
 }
 
 main

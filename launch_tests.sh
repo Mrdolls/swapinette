@@ -123,13 +123,14 @@ display_menu() {
         version="unknown"
     fi
     echo -e "${YELLOW}╔═════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║         Swapinette ${version}          ║${NC}"
+    echo -e "${YELLOW}║               Menu ${version}             ║${NC}"
     echo -e "${YELLOW}╚═════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. 42 Evaluation"
     echo "  2. Check Performance"
-    echo "  3. Exit"
+    echo "  3. Options"
+    echo "  4. Exit"
     echo ""
 }
 
@@ -148,9 +149,45 @@ run_manual_mode() {
     bash "$MODULE_BRUT_PATH"
 }
 
+run_options() {
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    while true; do
+        clear
+        echo -e "${YELLOW}╔═════════════════════════════════════╗${NC}"
+        echo -e "${YELLOW}║                Options              ║${NC}"
+        echo -e "${YELLOW}╚═════════════════════════════════════╝${NC}"
+        echo ""
+        echo -e "${BLUE}Select an option:${NC}"
+        echo -e "  1. Uninstall Swapinette"
+        echo -e "  2. Return to main menu"
+        echo
+        read -n1 -r -p "Choose an option: " opt
+        echo
+
+        case "$opt" in
+            1)
+                if [ -f "$SCRIPT_DIR/uninstall.sh" ]; then
+                    bash "$SCRIPT_DIR/uninstall.sh"
+                    exit 0
+                else
+                    echo -e "\033[0;31muninstall.sh not found!\033[0m"
+                    read -n1 -r -p "Press any key to return..."
+                fi
+                ;;
+            2)
+                break
+                ;;
+            *)
+                echo -e "\033[0;31mInvalid option. Try again.\033[0m"
+                sleep 1
+                ;;
+        esac
+    done
+}
+
 while true; do
     display_menu
-    read -n1 -r -s -p "Your choice [1-3]: " choice
+    read -n1 -r -s -p "Your choice [1-4]: " choice
 
     case "$choice" in
         1)
@@ -164,6 +201,9 @@ while true; do
             read -r
             ;;
         3)
+            run_options
+            ;;
+        4)
             clear
             exit 0
             ;;

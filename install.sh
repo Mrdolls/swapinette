@@ -54,6 +54,10 @@ main() {
         echo "Adding alias to shell config file..."
         echo -e "\n# Alias for Swapinette" >> "$SHELL_CONFIG"
         echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
+
+        if [ -f "$SHELL_CONFIG" ]; then
+            source "$SHELL_CONFIG"
+        fi
     fi
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
     clear

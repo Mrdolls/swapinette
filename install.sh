@@ -116,4 +116,3 @@ done <<< "$text"
 }
 
 main
-

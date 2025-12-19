@@ -25,7 +25,7 @@ check_update() {
         read -r -p "Do you want to update Swapinette? [y/n] " answer
         case "$answer" in
             y|Y|yes|YES)
-                echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
+                echo -e "${YELLOW}[ℹ] Updating Swapinette...${NC}"
                 bash -c "$(curl -fsSL "$INSTALL_URL")"
                 ;;
             *)
@@ -118,9 +118,9 @@ display_menu() {
     if [ -z "$version" ]; then
         version="unknown"
     fi
-    echo -e "${YELLOW}=========================================${NC}"
-    echo -e "${YELLOW}          SWAPINETTE ${version}              ${NC}"
-    echo -e "${YELLOW}=========================================${NC}"
+    echo -e "${YELLOW}╔═════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║         Swapinette ${version}         ║${NC}"
+    echo -e "${YELLOW}╚═════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
     echo "  1. 42 Evaluation"

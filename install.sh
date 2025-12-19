@@ -111,10 +111,11 @@ while IFS= read -r line; do
     echo
 done <<< "$text"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
-    echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
+    echo -e "${C_BLUE}✔ Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"
-    read -n1 -rsp $'\033[0;33mPress any key to launch Swapinette...\033[0m'
-    bash "$SCRIPT_DIR/swapinette.sh"
+    echo -e "${YELLOW}[ℹ] Launching Swapinette..${C_RESET}\n"
+    sleep 3
+    exec "$SCRIPT_DIR/swapinette.sh"
 }
 
 main

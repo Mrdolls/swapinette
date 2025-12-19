@@ -23,13 +23,18 @@ check_update() {
         echo -e "    Latest version: \033[0;32m$REMOTE_VERSION\033[0m"
         echo
         read -r -p "Do you want to update Swapinette? [y/n] " answer
+        read -n1 -r -s -p "Do you want to update Swapinette? [y/n] " answer
+        echo # juste pour passer à la ligne après la saisie
         case "$answer" in
-            y|Y|yes|YES)
-                echo -e "${YELLOW}[ℹ] Updating Swapinette...${NC}"
+            y|Y)
+                echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
                 bash -c "$(curl -fsSL "$INSTALL_URL")"
                 ;;
-            *)
+            n|N)
                 echo -e "\033[0;33m[ℹ] Update skipped\033[0m"
+                ;;
+            *)
+                echo -e "\033[0;33m[ℹ] Invalid input, update skipped\033[0m"
                 ;;
         esac
     fi

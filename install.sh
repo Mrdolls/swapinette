@@ -114,8 +114,8 @@ done <<< "$text"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"
     case "$base_name" in
-        zsh)   zsh ;;
-        bash)  bash ;;
+        zsh)   bash "$SCRIPT_DIR/swapinette.sh";;
+        bash)  bash "$SCRIPT_DIR/swapinette.sh";;
     esac
 }
 

@@ -22,14 +22,14 @@ check_update() {
         echo -e "    Local version : \033[0;31m$LOCAL_VERSION\033[0m"
         echo -e "    Latest version: \033[0;32m$REMOTE_VERSION\033[0m"
         echo
-        read -r -p "Do you want to update Swapinette? [y/N] " answer
+        read -r -p "Do you want to update Swapinette? [y/n] " answer
         case "$answer" in
             y|Y|yes|YES)
                 echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
                 bash -c "$(curl -fsSL "$INSTALL_URL")"
-                echo -e "\033[0;32m[✔] Update completed.\033[0m"
-                echo "Please restart Swapinette manually:"
-                echo "    bash $SCRIPT_DIR/swapinette.sh"
+                echo
+                echo -e "\033[0;32m[✔] Update completed. Restarting Swapinette...\033[0m"
+                bash "$SCRIPT_DIR/swapinette.sh"
                 exit 0
                 ;;
             *)

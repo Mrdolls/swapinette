@@ -164,8 +164,6 @@ test_leaks() {
     fi
 }
 
-
-
 test_norminette() {
     desc=$1
 
@@ -180,75 +178,42 @@ test_norminette() {
 }
 
 check_forbidden_functions() {
-    local forbidden_funcs="printf putchar puts sprintf snprintf strcpy strncpy strcmp strncmp strlen memcpy memset calloc realloc fork open close readv writev dup dup2 execve system perror getenv chdir chmod mkdir rmdir unlink rename link symlink lseek stat fstat fcntl pipe socket connect accept bind listen send recv select poll ioctl pthread_create pthread_join pthread_mutex_lock pthread_mutex_unlock signal raise alarm setjmp longjmp"
-    local desc="Forbidden functions"
-    declare -A found_files_per_func
-
-    printf "%-50s :" "$desc"
-
-    while IFS= read -r -d '' file; do
-        clean_code=$(awk '
-        BEGIN { in_comment = 0 }
-        {
-            line = $0
-
-            if (in_comment) {
-                if (line ~ /\*\//) {
-                    sub(/^.*\*\//, "", line)
-                    in_comment = 0
-                } else {
-                    next
-                }
-            }
-
-            while (line ~ /\/\*.*\*\//) {
-                sub(/\/\*.*\*\//, "", line)
-            }
-
-            if (line ~ /\/\*/) {
-                in_comment = 1
-                sub(/\/\*.*/, "", line)
-            }
-
-            if (line ~ /^[[:space:]]*\/\// || line ~ /^[[:space:]]*#/) next
-
-            if (length(line) > 0) print line
-        }
-        ' "$file")
-
-        for f in $forbidden_funcs; do
-            if echo "$clean_code" | grep -qw "$f"; then
-                found_files_per_func["$f"]+="$file "
-            fi
-        done
-    done < <(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/.git/*" -print0)
-
-    if [ ${#found_files_per_func[@]} -eq 0 ]; then
-        printf " \033[0;32mOK\033[0m\n"
-        return 0
+    desc=$1
+    local exec_file="$PS"
+    local forbidden_funcs="printf|dprintf|fprintf|sprintf|snprintf|memcpy|memmove|memset|strcpy|strncpy|strcat|strncat|strlcat|strchr|strrchr|strstr|strnstr|strcmp|strncmp|atoi|isalpha|isdigit|isalnum|isascii|isprint|toupper|tolower|calloc|realloc|strdup|strndup|strdupa|strndupa"
+    forbidden_funcs="$forbidden_funcs|fork|vfork|execve|execvp|execl|execlp|pipe|popen|system"
+    if ! command -v nm &> /dev/null; then
+        print_result "KO" "$desc (nm not found)"
+        return
     fi
+    bad_calls=$(nm -u "$exec_file" 2>/dev/null | \
+                sed 's/.* U //' | \
+                sed 's/^_//' | \
+                sed 's/@.*//' | \
+                grep -E "^($forbidden_funcs)$")
 
-    printf " \033[0;31mKO\033[0m [%d forbidden function(s) found]\n" "${#found_files_per_func[@]}"
-    for f in $(echo "${!found_files_per_func[@]}" | tr ' ' '\n' | sort); do
-        printf "  - %s\n" "$f"
-        local -a files_array
-        read -ra files_array <<< "${found_files_per_func[$f]}"
-        for file in "${files_array[@]}"; do
-            printf "    [%s]\n" "$file"
+    if [ -z "$bad_calls" ]; then
+        print_result "OK" "$desc"
+    else
+        nb_errors=$(echo "$bad_calls" | wc -l)
+        printf "%-50s : %b%s%b %s\n" "$desc" "$RED" "KO" "$NC" "[$nb_errors Forbidden call(s)]"
+
+        echo "$bad_calls" | sort | uniq | while read -r func; do
+            echo -e "      -> ${RED}Function '$func' is forbidden!${NC}"
         done
-    done
-
-    return 1
+        failed_tests=$((failed_tests + 1))
+    fi
 }
 
 ### --- TESTS ---
 echo -e "${YELLOW}"
     echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║              Norminette              ║${NC}"
+    echo -e "${YELLOW}║    Norminette & Forbiden Fonctions   ║${NC}"
     echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
 echo -e "${NC}"
 
 test_norminette "Norminette"
+check_forbidden_functions "Forbiden Fonctions"
 
 echo -e "${YELLOW}"
     echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"

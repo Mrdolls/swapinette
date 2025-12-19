@@ -113,10 +113,8 @@ done <<< "$text"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔  Use swapinette everywhere!${C_RESET}\n"
     cd "$ORIGINAL_DIR"
-    case "$base_name" in
-        zsh)   bash "$SCRIPT_DIR/swapinette.sh";;
-        bash)  bash "$SCRIPT_DIR/swapinette.sh";;
-    esac
+    read -n1 -rsp $'\033[0;33mPress any key to launch Swapinette...\033[0m'
+    bash -c "$(curl -fsSL "$INSTALL_URL")" && bash "$SCRIPT_DIR/swapinette.sh"
 }
 
 main

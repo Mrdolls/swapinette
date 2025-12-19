@@ -47,17 +47,10 @@ case "$answer" in
             sleep 0.2
             echo -e "${GREEN}[✔] Alias removed from $SHELL_CONFIG${NC} (backup saved as $SHELL_CONFIG.bak)"
         fi
-
-        sleep 0.2
         echo -e "${GREEN}[✔] Swapinette has been successfully uninstalled!${NC}"
         sleep 0.2
-        echo -e "${YELLOW}[ℹ] Launching a clean shell...${NC}"
-        exec "$SHELL"
+        exit 0
         ;;
     *)
-        echo -e "${YELLOW}[ℹ] Uninstallation cancelled. Returning to menu...${NC}"
-        sleep 0.3
-        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-        exec "$SCRIPT_DIR/swapinette.sh"
         ;;
 esac

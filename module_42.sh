@@ -352,7 +352,7 @@ ARG=$(seq 1 5 | sort -R | tr '\n' ' ')
 test_ops_count "Check 5 random elements (under 12 operations)" "$ARG" 12 500
 
 echo -e "${YELLOW}"
-echo "═════  Performance Tests (100 tests)  ════"
+echo "════  Performance Tests (100 tests)  ════"
 echo -e "${NC}"
 
 ARG=$(seq 1 100 | sort -R | tr '\n' ' ')

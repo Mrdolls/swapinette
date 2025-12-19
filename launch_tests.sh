@@ -22,7 +22,6 @@ check_update() {
         echo -e "    Local version : \033[0;31m$LOCAL_VERSION\033[0m"
         echo -e "    Latest version: \033[0;32m$REMOTE_VERSION\033[0m"
         echo
-        read -r -p "Do you want to update Swapinette? [y/n] " answer
         read -n1 -r -s -p "Do you want to update Swapinette? [y/n] " answer
         echo # juste pour passer à la ligne après la saisie
         case "$answer" in

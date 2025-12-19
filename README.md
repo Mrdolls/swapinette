@@ -1,4 +1,4 @@
-# Swapinette
+# Swapinette – Push_swap Tester
 **Swapinette** is an interactive script to test your [`push_swap`](https://github.com/) project from 42 School.  
 It provides two modes:
 - **Evaluation Mode** – Automated tests with scoring based on 42's guidelines.

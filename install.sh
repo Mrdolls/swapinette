@@ -115,7 +115,6 @@ done <<< "$text"
     cd "$ORIGINAL_DIR"
     echo -e "${YELLOW}[ℹ] Launching Swapinette..${C_RESET}\n"
     sleep 3
-    exec "$SCRIPT_DIR/swapinette.sh"
 }
 
 main

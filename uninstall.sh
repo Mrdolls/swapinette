@@ -49,8 +49,9 @@ case "$answer" in
         fi
         echo -e "${GREEN}[✔] Swapinette has been successfully uninstalled!${NC}"
         sleep 0.2
-        exit 0
+        exit 42
         ;;
     *)
+        exit 0
         ;;
 esac

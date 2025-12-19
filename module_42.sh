@@ -244,7 +244,7 @@ check_forbidden_functions() {
 ### --- TESTS ---
 echo -e "${YELLOW}"
     echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║              Norminette               ║${NC}"
+    echo -e "${YELLOW}║              Norminette              ║${NC}"
     echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
 echo -e "${NC}"
 

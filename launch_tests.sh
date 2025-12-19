@@ -87,7 +87,7 @@ compile_push_swap() {
 
 exec_name=$(find_upwards "push_swap")
 compile_push_swap
-sleep 0.5
+sleep 0.2
 echo -e "${YELLOW}[ℹ] Launching swapinette...${NC}"
 sleep 1
 

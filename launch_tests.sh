@@ -26,7 +26,11 @@ check_update() {
         case "$answer" in
             y|Y|yes|YES)
                 echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
-                bash -c "$(curl -fsSL "$INSTALL_URL")" && echo -e "\033[0;32m[✔] Update completed. Restarting Swapinette...\033[0m" && bash "$SCRIPT_DIR/swapinette.sh"
+                bash -c "$(curl -fsSL "$INSTALL_URL")"
+                echo -e "\033[0;32m[✔] Update completed.\033[0m"
+                echo "Please restart Swapinette manually:"
+                echo "    bash $SCRIPT_DIR/swapinette.sh"
+                exit 0
                 ;;
             *)
                 echo -e "\033[0;33m[ℹ] Update skipped\033[0m"

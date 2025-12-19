@@ -23,7 +23,7 @@ check_update() {
         echo -e "    Latest version: \033[0;32m$REMOTE_VERSION\033[0m"
         echo
         read -n1 -r -s -p "Do you want to update Swapinette? [y/n] " answer
-        echo # juste pour passer à la ligne après la saisie
+        echo
         case "$answer" in
             y|Y)
                 echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
@@ -118,12 +118,12 @@ chmod +x "$MODULE_BRUT_PATH"
 display_menu() {
     clear
     local version
-    version=$(git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null)
+    version=$(cat "$SCRIPT_DIR/version.txt")
     if [ -z "$version" ]; then
         version="unknown"
     fi
     echo -e "${YELLOW}╔═════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║         Swapinette ${version}         ║${NC}"
+    echo -e "${YELLOW}║         Swapinette ${version}          ║${NC}"
     echo -e "${YELLOW}╚═════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${BLUE}Select an option:${NC}"
@@ -150,7 +150,7 @@ run_manual_mode() {
 
 while true; do
     display_menu
-    read -p "Your choice [1-3]: " choice
+    read -n1 -r -s -p "Your choice [1-3]: " choice
 
     case "$choice" in
         1)

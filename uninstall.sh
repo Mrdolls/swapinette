@@ -53,5 +53,6 @@ case "$answer" in
         ;;
     *)
         echo -e "${YELLOW}[ℹ] Uninstallation cancelled.${NC}"
+        exit 0
         ;;
 esac

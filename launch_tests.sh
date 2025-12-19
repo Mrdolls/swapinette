@@ -167,8 +167,7 @@ run_options() {
         case "$opt" in
             1)
                 if [ -f "$SCRIPT_DIR/uninstall.sh" ]; then
-                    bash "$SCRIPT_DIR/uninstall.sh"
-                    break
+                    bash "$SCRIPT_DIR/uninstall.sh" || exit 0
                 else
                     echo -e "\033[0;31muninstall.sh not found!\033[0m"
                     read -n1 -r -p "Press any key to return..."

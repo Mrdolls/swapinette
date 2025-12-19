@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 
 # Confirmation
 echo -e "${YELLOW}[⚠] Are you sure you want to uninstall Swapinette? [y/N]${NC}"
-read -n1 -r -p answer
+read -n1 -r answer
 echo
 case "$answer" in
     y|Y)

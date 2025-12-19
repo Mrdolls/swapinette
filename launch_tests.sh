@@ -103,8 +103,8 @@ compile_push_swap() {
     fi
 }
 
-exec_name=$(find_upwards "push_swap")
 compile_push_swap
+exec_name=$(find_upwards "push_swap")
 sleep 0.2
 echo -e "${YELLOW}[ℹ] Launching swapinette...${NC}"
 sleep 1
@@ -163,6 +163,19 @@ run_manual_mode() {
     bash "$MODULE_BRUT_PATH"
 }
 
+run_guestbook() {
+    local title="%F0%9F%8E%96%EF%B8%8F%20I%20passed%20Push_Swap%20with%20Swapinette"
+    local url="https://github.com/Mrdolls/swapinette/issues/new?title=${title}"
+    echo -e "${BLUE}[ℹ] Trying to open your browser...${NC}"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        open "$url" > /dev/null 2>&1
+    elif grep -qi microsoft /proc/version 2>/dev/null; then
+        /mnt/c/Windows/System32/cmd.exe /c "start $url" > /dev/null 2>&1
+    else
+        xdg-open "$url" > /dev/null 2>&1
+    fi
+}
+
 run_options() {
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     while true; do
@@ -173,12 +186,13 @@ run_options() {
         echo ""
         echo -e "${BLUE}Select an option:${NC}"
         echo -e "  1. Uninstall Swapinette"
-        echo -e "  2. Return to main menu"
+        echo -e "  2. Leave a Feedback"
+        echo -e "  3. Return to main menu"
         echo
-        read -n1 -r -p "Choose an option: " opt
+        read -n1 -r -p "Your choice [1-3]: " choice2
         echo
 
-        case "$opt" in
+        case "$choice2" in
             1)
                 if [ -f "$SCRIPT_DIR/uninstall.sh" ]; then
                     bash "$SCRIPT_DIR/uninstall.sh"
@@ -192,11 +206,12 @@ run_options() {
                 fi
                 ;;
             2)
+                run_guestbook
+                ;;
+            3)
                 break
                 ;;
             *)
-                echo -e "\033[0;31mInvalid option. Try again.\033[0m"
-                sleep 1
                 ;;
         esac
     done
@@ -225,8 +240,6 @@ while true; do
             exit 0
             ;;
         *)
-            echo -e "\n${RED}Invalid choice. Please try again.${NC}"
-            sleep 2
             ;;
     esac
 done

@@ -1,38 +1,46 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VERSION_FILE="$SCRIPT_DIR/version.txt"
-CURRENT_VERSION=""
+check_update() {
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-get_git_version() {
-    git -C "$SCRIPT_DIR" fetch --tags
-    git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "unknown"
+    VERSION_URL="https://raw.githubusercontent.com/Mrdolls/swapinette/main/version.txt"
+    INSTALL_URL="https://raw.githubusercontent.com/Mrdolls/swapinette/refs/heads/main/install.sh"
+
+    LOCAL_VERSION="unknown"
+    REMOTE_VERSION="unknown"
+
+    if [ -f "$SCRIPT_DIR/version.txt" ]; then
+        LOCAL_VERSION=$(cat "$SCRIPT_DIR/version.txt")
+    fi
+
+    REMOTE_VERSION=$(curl -fsSL "$VERSION_URL" 2>/dev/null)
+
+    [ -z "$REMOTE_VERSION" ] && return
+
+    if [ "$LOCAL_VERSION" != "$REMOTE_VERSION" ]; then
+        echo -e "\033[0;33m[⚠] New version available\033[0m"
+        echo -e "    Local version : \033[0;31m$LOCAL_VERSION\033[0m"
+        echo -e "    Latest version: \033[0;32m$REMOTE_VERSION\033[0m"
+        echo
+        read -r -p "Do you want to update Swapinette? [y/N] " answer
+        case "$answer" in
+            y|Y|yes|YES)
+                echo -e "\033[0;34m[ℹ] Updating Swapinette...\033[0m"
+                bash -c "$(curl -fsSL "$INSTALL_URL")"
+                echo
+                echo -e "\033[0;32m[✔] Update completed. Restarting Swapinette...\033[0m"
+                exec "$SCRIPT_DIR/swapinette.sh"
+                ;;
+            *)
+                echo -e "\033[0;33m[ℹ] Update skipped\033[0m"
+                ;;
+        esac
+    fi
 }
 
-if [ ! -f "$VERSION_FILE" ]; then
-    echo "$CURRENT_VERSION" > "$VERSION_FILE"
-fi
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VERSION_FILE="$SCRIPT_DIR/version.txt"
 
-stored_version=$(<"$VERSION_FILE")
-echo -e "Verifying updates..."
-latest_version=$(get_git_version)
-
-if [ "$latest_version" = "unknown" ]; then
-    echo "Unable to retrieve git version (not in a git repo?)"
-else
-    if [ "$latest_version" != "$stored_version" ]; then
-        echo "New version detected: $latest_version (stored: $stored_version)"
-        echo "Updating swapinette..."
-
-        git -C "$SCRIPT_DIR" pull
-
-        echo "$latest_version" > "$VERSION_FILE"
-
-        echo "Update complete. Automatically restarting the script..."
-        sleep 3
-        exec "$0" "$@"
-    fi
-fi
 MODULE_TESTER_PATH="$SCRIPT_DIR/module_tester.sh"
 MODULE_42_PATH="$SCRIPT_DIR/module_42.sh"
 MODULE_BRUT_PATH="$SCRIPT_DIR/module_perf.sh"
@@ -42,6 +50,8 @@ RED="\033[0;31m"
 YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
 NC="\033[0m"
+
+check_update
 
 find_upwards() {
     local filename="$1"
@@ -58,12 +68,31 @@ find_upwards() {
     return 1
 }
 
+compile_push_swap() {
+    if [ ! -f ./push_swap ]; then
+        echo -e "${YELLOW}[ℹ] push_swap not found, compiling...${NC}"
+        if [ -f Makefile ]; then
+            make
+            if [ ! -f ./push_swap ]; then
+                echo -e "${RED}✘ Error:  Compilation failed: push_swap still missing${NC}"
+                exit 1
+            else
+                echo -e "${GREEN}[✔] Compilation successful!${NC}"
+            fi
+        else
+            echo -e "${RED}✘ Error:  No Makefile found"${NC}
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}[✔] push_swap found${NC}"
+    fi
+}
+
 exec_name=$(find_upwards "push_swap")
-if [ -z "$exec_name" ]; then
-    echo -e "${RED}✘ Error: Executable 'push_swap' not found.${NC}"
-    echo "Make sure it is compiled and has execution permissions (chmod +x push_swap)."
-    exit 1
-fi
+compile_push_swap
+sleep 0.5
+echo -e "${YELLOW}[ℹ] Launching swapinette...${NC}"
+sleep 1
 
 os_type=$(uname -s)
 case "$os_type" in

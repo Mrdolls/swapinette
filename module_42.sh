@@ -11,6 +11,21 @@ NC="\033[0m"
 MAX_DESC_LENGTH=50
 failed_tests=0;
 
+if [ -z "$PS" ] || [ -z "$CK" ]; then
+    echo -e "${RED}✘ Usage: ./module_42.sh ./push_swap ./checker ${NC}"
+    exit 1
+fi
+
+if [ ! -x "$PS" ]; then
+    echo -e "${RED}✘ push_swap not executable: $PS ${NC}"
+    exit 1
+fi
+
+if [ ! -x "$CK" ]; then
+    echo -e "${RED}✘ checker not executable: $CK ${NC}"
+    exit 1
+fi
+
 print_result() {
     status=$1
     desc=$2
@@ -51,12 +66,12 @@ test_error() {
 desc=$1
 input=$2
 tmp_error=$(mktemp /tmp/ps_error_XXXXXX)
-$PS $input 1> /dev/null 2> "$tmp_error" 
-if grep -q "Error" "$tmp_error"; then 
-print_result "OK" "$desc" 
-else print_result "KO" "$desc" 
-fi 
-rm -f "$tmp_error" 
+$PS $input 1> /dev/null 2> "$tmp_error"
+if grep -q "Error" "$tmp_error"; then
+print_result "OK" "$desc"
+else print_result "KO" "$desc"
+fi
+rm -f "$tmp_error"
 }
 
 

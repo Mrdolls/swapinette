@@ -15,6 +15,7 @@ read -n1 -r answer
 echo
 case "$answer" in
     y|Y)
+        clear
         echo -e "${RED}[ℹ] Uninstalling Swapinette...${NC}"
         cd "$HOME" || exit 1
 

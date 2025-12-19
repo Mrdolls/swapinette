@@ -10,7 +10,7 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-read -n1 -r -p "[⚠] Are you sure you want to uninstall Swapinette? [y/n]" answer
+read -n1 -r -p "[⚠] Are you sure you want to uninstall Swapinette? [y/n] " answer
 echo
 case "$answer" in
     y|Y)
@@ -36,7 +36,6 @@ case "$answer" in
 
         SHELL_CONFIG=""
         shell_name=$(basename "$SHELL")
-
         case "$shell_name" in
             zsh)   SHELL_CONFIG="$HOME/.zshrc" ;;
             bash)  SHELL_CONFIG="$HOME/.bashrc" ;;
@@ -48,11 +47,17 @@ case "$answer" in
             sleep 0.2
             echo -e "${GREEN}[✔] Alias removed from $SHELL_CONFIG${NC} (backup saved as $SHELL_CONFIG.bak)"
         fi
+
         sleep 0.2
         echo -e "${GREEN}[✔] Swapinette has been successfully uninstalled!${NC}"
+        sleep 0.2
+        echo -e "${YELLOW}[ℹ] Launching a clean shell...${NC}"
+        exec "$SHELL"
         ;;
     *)
-        echo -e "${YELLOW}[ℹ] Uninstallation cancelled.${NC}"
-        exit 0
+        echo -e "${YELLOW}[ℹ] Uninstallation cancelled. Returning to menu...${NC}"
+        sleep 0.3
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        exec "$SCRIPT_DIR/swapinette.sh"
         ;;
 esac

@@ -43,7 +43,7 @@ print_result() {
 empty_test() {
     desc=$1
     input=$2
-    result=$($PS $input | wc -l)
+    result=$("$PS" $input | wc -l)
     if [ "$result" -eq 0 ]; then
         print_result "OK" "$desc"
     else
@@ -66,7 +66,7 @@ test_error() {
 desc=$1
 input=$2
 tmp_error=$(mktemp /tmp/ps_error_XXXXXX)
-$PS $input 1> /dev/null 2> "$tmp_error"
+"$PS" $input 1> /dev/null 2> "$tmp_error"
 if grep -q "Error" "$tmp_error"; then
 print_result "OK" "$desc"
 else print_result "KO" "$desc"
@@ -108,7 +108,7 @@ test_ops_count() {
             input=$(shuf -i 1-10000 -n $size | tr '\n' ' ' | sed 's/ $//')
         fi
 
-        output=$($PS $input)
+        output=$("$PS" $input)
         ops=$(echo "$output" | wc -l)
         total_ops=$((total_ops + ops))
 
@@ -153,7 +153,7 @@ test_leaks() {
         return
     fi
 
-    valgrind_output=$(LANG=C valgrind --leak-check=full $PS $args 2>&1)
+    valgrind_output=$(LANG=C valgrind --leak-check=full "$PS" $args 2>&1)
     leaks_summary=$(echo "$valgrind_output" | grep -E "definitely lost:|indirectly lost:|possibly lost:|still reachable:")
     leak_line=$(echo "$leaks_summary" | awk '$4 != 0 {print; exit}')
 

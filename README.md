@@ -22,7 +22,7 @@ The required binaries (checker_linux / checker_Mac) are bundled inside the scrip
 ### Automatic push_swap detection
 You can launch the script from any subfolder of your project — it will automatically locate your push_swap executable and use the correct built-in checker.
 
-Intelligent compilation
+### Intelligent compilation
 If push_swap is not compiled or the executable is missing, Swapinette will automatically run make to build it before running any tests.
 This ensures you’re always testing the latest version of your code without manually compiling.
 

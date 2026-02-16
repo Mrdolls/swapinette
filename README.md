@@ -19,7 +19,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Mrdolls/swapinette/refs/
 No need to download any checker!
 The required binaries (checker_linux / checker_Mac) are bundled inside the script's checker_os/ folder and selected automatically based on your OS.
 
-Automatic push_swap detection
+### Automatic push_swap detection
 You can launch the script from any subfolder of your project — it will automatically locate your push_swap executable and use the correct built-in checker.
 
 Intelligent compilation

@@ -16,15 +16,17 @@ main() {
     clear
     echo -e "${C_BLUE}Welcome to the Swapinette installer!${C_RESET}"
 
+    # Vérification de Git
     if ! command -v git &> /dev/null; then
         echo -e "${C_RED}Error: 'git' is not installed. Please install it before proceeding.${C_RESET}"
         exit 1
     fi
     echo -e "${C_GREEN}✔ 'git' dependency found.${C_RESET}"
 
+    # Clone ou Mise à jour
     if [ -d "$INSTALL_DIR" ]; then
         echo -e "${C_YELLOW}Existing directory found. Forcing update to the latest version...${C_RESET}"
-        cd "$INSTALL_DIR"
+        cd "$INSTALL_DIR" || exit 1
         git fetch origin > /dev/null 2>&1
         git reset --hard origin/main || { echo -e "${C_RED}Forced update failed.${C_RESET}"; exit 1; }
     else
@@ -33,48 +35,45 @@ main() {
     fi
     echo -e "${C_GREEN}✔ Tool downloaded/updated in $INSTALL_DIR.${C_RESET}"
 
-    SHELL_CONFIG=""
-    shell_name=$(basename "$SHELL")
-
-    if [ -n "$SHELL" ]; then
-        base_name=$(basename "$SHELL")
-    else
-        base_name=$(ps -p $$ -o comm=)
-    fi
-
-    case "$base_name" in
-        zsh)   SHELL_CONFIG="$HOME/.zshrc" ;;
-        bash)  SHELL_CONFIG="$HOME/.bashrc" ;;
-        *)     SHELL_CONFIG="$HOME/.profile" ;;
-    esac
-    echo -e "Detected shell config file: ${C_BLUE}$SHELL_CONFIG${C_RESET}"
-
+    # --- NOUVELLE GESTION DES ALIAS ---
     ALIAS_COMMAND="alias $COMMAND_NAME='$INSTALL_DIR/launch_tests.sh'"
-    if ! grep -qF "$ALIAS_COMMAND" "$SHELL_CONFIG"; then
-        echo "Adding alias to shell config file..."
-        echo -e "\n# Alias for Swapinette" >> "$SHELL_CONFIG"
-        echo "$ALIAS_COMMAND" >> "$SHELL_CONFIG"
-        source "$SHELL_CONFIG"
+    CONFIG_FILES=("$HOME/.zshrc" "$HOME/.bashrc")
+    ALIAS_ADDED=0
+
+    echo -e "${C_BLUE}Configuring alias...${C_RESET}"
+
+    for config_file in "${CONFIG_FILES[@]}"; do
+        if [ -f "$config_file" ]; then
+            # On nettoie une éventuelle ancienne version de l'alias
+            sed -i.bak "/alias $COMMAND_NAME=/d" "$config_file" 2>/dev/null
+            
+            # On ajoute le nouvel alias
+            echo -e "\n# Alias for Swapinette" >> "$config_file"
+            echo "$ALIAS_COMMAND" >> "$config_file"
+            
+            echo -e "${C_GREEN}✔ Alias added to $config_file${C_RESET}"
+            ALIAS_ADDED=1
+        fi
+    done
+
+    if [ "$ALIAS_ADDED" -eq 0 ]; then
+        # Fallback si ni .zshrc ni .bashrc n'existent
+        echo -e "\n# Alias for Swapinette" >> "$HOME/.profile"
+        echo "$ALIAS_COMMAND" >> "$HOME/.profile"
+        echo -e "${C_GREEN}✔ Alias added to $HOME/.profile${C_RESET}"
     fi
+
     echo -e "${C_GREEN}✔ Alias '$COMMAND_NAME' has been configured.${C_RESET}"
+    echo -e "${C_YELLOW}(Note: Please restart your terminal or run 'source ~/.zshrc' or 'source ~/.bashrc' to apply the alias)${C_RESET}"
+    sleep 1
     clear
+    # --- FIN DE LA NOUVELLE GESTION DES ALIAS ---
+
+
     ## TEST ASCII
-    hsla_to_rgb() {
-    local h=$1
-    local s=$2
-    local l=$3
+    # (J'ai supprimé la fonction hsla_to_rgb car tu ne l'utilises pas dans la boucle en dessous, 
+    # tu utilises tes variables green_r, orange_r, etc. C'est plus propre comme ça !)
 
-    local c=$(echo "scale=4; (1 - c($h*3.14159/180)*c($h*3.14159/180))" | bc -l)
-    if (( $(echo "$h >= 0 && $h < 60" | bc -l) )); then
-        r=255; g=128; b=0
-    elif (( $(echo "$h >= 60 && $h < 90" | bc -l) )); then
-        r=255; g=165; b=0
-    else
-        r=0; g=255; b=0
-    fi
-
-    echo "$r $g $b"
-}
 green_r=0; green_g=255; green_b=0
 orange_r=255; orange_g=165; orange_b=0
 red_r=255; red_g=0; red_b=0
@@ -92,6 +91,12 @@ text=$(echo "$text" | sed '/^\s*$/d')
 
 while IFS= read -r line; do
     len=${#line}
+    # Prévention d'une division par zéro si la ligne est vide ou fait 1 caractère
+    if (( len <= 1 )); then
+        echo "$line"
+        continue
+    fi
+
     for ((i=0; i<len; i++)); do
         pos=$(( i * 100 / (len - 1) ))
         if (( pos <= 50 )); then
@@ -113,7 +118,7 @@ while IFS= read -r line; do
 done <<< "$text"
     echo -e "${C_GREEN}🎉 Installation completed successfully!${C_RESET}"
     echo -e "${C_BLUE}✔ Use swapinette everywhere!${C_RESET}\n"
-    cd "$ORIGINAL_DIR"
+    cd "$ORIGINAL_DIR" || exit
 }
 
 main
